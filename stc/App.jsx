@@ -369,7 +369,7 @@ export default function App() {
             )}
 
             <div className="bg-blue-500/20 border border-blue-400/30 rounded-2xl p-4">
-              <h3 className="text-blue-300 font-black mb-2">📱 Share with Family</h3>
+              <h3 className="text-blue-300 font-black mb-2">📱 Share with Family & Friends</h3>
               <p className="text-white/60 text-sm mb-3">Everyone fills their bracket on this same link. Share it via WhatsApp!</p>
               <button onClick={() => {
                   navigator.clipboard.writeText(window.location.href);
