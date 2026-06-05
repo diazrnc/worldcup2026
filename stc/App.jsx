@@ -328,7 +328,7 @@ export default function App() {
             <div className="text-center py-6">
               <div className="text-6xl mb-3">🌍⚽🏆</div>
               <h1 style={{fontFamily:"'Fredoka One',sans-serif"}} className="text-4xl text-white font-black mb-2">
-                Family Bracket
+               Friends Bracket
               </h1>
               <p className="text-white/60 text-lg">FIFA World Cup 2026</p>
               <p className="text-yellow-400 font-bold mt-1">June 11 – July 19 · USA/CAN/MEX</p>
