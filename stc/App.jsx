@@ -2,34 +2,34 @@ import { useState, useEffect, useCallback } from "react";
 
 // ── DATA ────────────────────────────────────────────────────────────────────
 const GROUPS = {
-  A: ["Mexico","South Africa","Ecuador","Czech Republic"],
-  B: ["USA","Panama","Morocco","Yemen"],
-  C: ["Argentina","Peru","Australia","Ukraine"],
-  D: ["Brazil","Chile","Cameroon","Slovenia"],
-  E: ["England","Senegal","Costa Rica","Algeria"],
-  F: ["France","Uruguay","Canada","Hungary"],
-  G: ["Spain","Belgium","Japan","Uzbekistan"],
-  H: ["Germany","Mexico (wait)","Colombia","Saudi Arabia"],
-  I: ["Portugal","Turkey","Paraguay","Ivory Coast"],
-  J: ["Netherlands","Egypt","Iraq","South Korea"],
-  K: ["Italy","Serbia","Nigeria","Iran"],
-  L: ["Croatia","Venezuela","Cuba","New Zealand"],
+  A: ["Mexico","South Africa","South Korea","Czech Republic"],
+  B: ["Canada","Bosnia-Herzegovina","Qatar","Switzerland"],
+  C: ["Brazil","Morroco","Haiti","Scotland"],
+  D: ["United States","Paraguay","Australia","Turkey"],
+  E: ["Germany","Curaçao","Ivory Coast","Ecuador"],
+  F: ["Neatherland","Japan","Swiden","Tunisia"],
+  G: ["Bwlgium","Egypt","Iran","New Zealand"],
+  H: ["Spain","Cape Verde","Daudi Arabia","Uruguay"],
+  I: ["France","Senegal","Iraq","Norway"],
+  J: ["Argentina","Algeria","Austria","Jordan"],
+  K: ["Portugal","DR Congo","Uzbekistan","Colombia"],
+  L: ["England","Croatia","Ghana","Panama"],
 };
 
 // Actual 2026 groups (simplified for fun)
 const REAL_GROUPS = {
-  A: { name:"A", teams:[{f:"🇲🇽",n:"Mexico"},{f:"🇿🇦",n:"South Africa"},{f:"🇪🇨",n:"Ecuador"},{f:"🇨🇿",n:"Czech Republic"}]},
-  B: { name:"B", teams:[{f:"🇺🇸",n:"USA"},{f:"🇵🇦",n:"Panama"},{f:"🇲🇦",n:"Morocco"},{f:"🇾🇪",n:"Yemen"}]},
-  C: { name:"C", teams:[{f:"🇦🇷",n:"Argentina"},{f:"🇵🇪",n:"Peru"},{f:"🇦🇺",n:"Australia"},{f:"🇺🇦",n:"Ukraine"}]},
-  D: { name:"D", teams:[{f:"🇧🇷",n:"Brazil"},{f:"🇨🇱",n:"Chile"},{f:"🇨🇲",n:"Cameroon"},{f:"🇸🇮",n:"Slovenia"}]},
-  E: { name:"E", teams:[{f:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",n:"England"},{f:"🇸🇳",n:"Senegal"},{f:"🇨🇷",n:"Costa Rica"},{f:"🇩🇿",n:"Algeria"}]},
-  F: { name:"F", teams:[{f:"🇫🇷",n:"France"},{f:"🇺🇾",n:"Uruguay"},{f:"🇨🇦",n:"Canada"},{f:"🇭🇺",n:"Hungary"}]},
-  G: { name:"G", teams:[{f:"🇪🇸",n:"Spain"},{f:"🇧🇪",n:"Belgium"},{f:"🇯🇵",n:"Japan"},{f:"🇺🇿",n:"Uzbekistan"}]},
-  H: { name:"H", teams:[{f:"🇩🇪",n:"Germany"},{f:"🇨🇴",n:"Colombia"},{f:"🇸🇦",n:"Saudi Arabia"},{f:"🇷🇸",n:"Serbia"}]},
-  I: { name:"I", teams:[{f:"🇵🇹",n:"Portugal"},{f:"🇹🇷",n:"Turkey"},{f:"🇵🇾",n:"Paraguay"},{f:"🇨🇮",n:"Ivory Coast"}]},
-  J: { name:"J", teams:[{f:"🇳🇱",n:"Netherlands"},{f:"🇪🇬",n:"Egypt"},{f:"🇮🇶",n:"Iraq"},{f:"🇰🇷",n:"South Korea"}]},
-  K: { name:"K", teams:[{f:"🇮🇹",n:"Italy"},{f:"🇷🇸",n:"DR Congo"},{f:"🇳🇬",n:"Nigeria"},{f:"🇮🇷",n:"Iran"}]},
-  L: { name:"L", teams:[{f:"🇭🇷",n:"Croatia"},{f:"🇻🇪",n:"Venezuela"},{f:"🇨🇺",n:"Cuba"},{f:"🇳🇿",n:"New Zealand"}]},
+  A: { name:"A", teams:[{f:"🇲🇽",n:"Mexico"},{f:"🇿🇦",n:"South Africa"},{f:"🇰🇷",n:"South Korea"},{f:"🇨🇿",n:"Czechia"}]},
+  B: { name:"B", teams:[{f:"🇨🇦",n:"Canada"},{f:"🇧🇦",n:"Bosnia-Herzegovina"},{f:"🇶🇦",n:"Qatar"},{f:"🇨🇭",n:"Switzerland"}]},
+  C: { name:"C", teams:[{f:"🇧🇷",n:"Brazil"},{f:"🇲🇦",n:"Morocco"},{f:"🇭🇹",n:"Haiti"},{f:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",n:"Scotland"}]},
+  D: { name:"D", teams:[{f:"🇺🇸",n:"USA"},{f:"🇵🇾",n:"Paraguay"},{f:"🇦🇺",n:"Australia"},{f:"🇹🇷",n:"Turkey"}]},
+  E: { name:"E", teams:[{f:"🇩🇪",n:"Germany"},{f:"🇨🇼",n:"Curaçao"},{f:"🇨🇮",n:"Ivory Coast"},{f:"🇪🇨",n:"Ecuador"}]},
+  F: { name:"F", teams:[{f:"🇳🇱",n:"Netherlands"},{f:"🇯🇵",n:"Japan"},{f:"🇸🇪",n:"Sweden"},{f:"🇹🇳",n:"Tunisia"}]},
+  G: { name:"G", teams:[{f:"🇧🇪",n:"Belgium"},{f:"🇪🇬",n:"Egypt"},{f:"🇮🇷",n:"Iran"},{f:"🇳🇿",n:"New Zealand"}]},
+  H: { name:"H", teams:[{f:"🇪🇸",n:"Spain"},{f:"🇨🇻",n:"Cape Verde"},{f:"🇸🇦",n:"Saudi Arabia"},{f:"🇺🇾",n:"Uruguay"}]},
+  I: { name:"I", teams:[{f:"🇫🇷",n:"France"},{f:"🇸🇳",n:"Senegal"},{f:"🇮🇶",n:"Iraq"},{f:"🇳🇴",n:"Norway"}]},
+  J: { name:"J", teams:[{f:"🇦🇷",n:"Argentina"},{f:"🇩🇿",n:"Algeria"},{f:"🇦🇹",n:"Austria"},{f:"🇯🇴",n:"Jordan"}]},
+  K: { name:"K", teams:[{f:"🇵🇹",n:"Portugal"},{f:"🇨🇩",n:"DR Congo"},{f:"🇺🇿",n:"Uzbekistan"},{f:"🇨🇴",n:"Colombia"}]},
+  L: { name:"L", teams:[{f:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",n:"England"},{f:"🇭🇷",n:"Croatia"},{f:"🇬🇭",n:"Ghana"},{f:"🇵🇦",n:"Panama"}]},
 };
 
 const ROUNDS = ["Round of 32","Round of 16","Quarter-Finals","Semi-Finals","Final"];
