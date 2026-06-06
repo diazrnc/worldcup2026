@@ -141,29 +141,29 @@ const KNOCKOUT_SCHEDULE = {
     {date:"Jun 29", city:"Toronto 🇨🇦"},
     {date:"Jun 30", city:"Miami 🇺🇸"},
     {date:"Jun 30", city:"Houston 🇺🇸"},
-    {date:"Jul 1", city:"San Francisco 🇺🇸"},
-    {date:"Jul 1", city:"Seattle 🇺🇸"},
-    {date:"Jul 1", city:"New York/NJ 🇺🇸"},
-    {date:"Jul 2", city:"Los Angeles 🇺🇸"},
-    {date:"Jul 2", city:"Toronto 🇨🇦"},
-    {date:"Jul 2", city:"Vancouver 🇨🇦"},
-    {date:"Jul 3", city:"Dallas 🇺🇸"},
-    {date:"Jul 3", city:"Miami 🇺🇸"},
-    {date:"Jul 3", city:"Atlanta 🇺🇸"},
-    {date:"Jul 3", city:"Kansas City 🇺🇸"},
+    {date:"Jul 1",  city:"San Francisco 🇺🇸"},
+    {date:"Jul 1",  city:"Seattle 🇺🇸"},
+    {date:"Jul 1",  city:"New York/NJ 🇺🇸"},
+    {date:"Jul 2",  city:"Los Angeles 🇺🇸"},
+    {date:"Jul 2",  city:"Toronto 🇨🇦"},
+    {date:"Jul 2",  city:"Vancouver 🇨🇦"},
+    {date:"Jul 3",  city:"Dallas 🇺🇸"},
+    {date:"Jul 3",  city:"Miami 🇺🇸"},
+    {date:"Jul 3",  city:"Atlanta 🇺🇸"},
+    {date:"Jul 3",  city:"Kansas City 🇺🇸"},
   ],
   r16: [
-    {date:"Jul 4", city:"Houston 🇺🇸"},
-    {date:"Jul 4", city:"Philadelphia 🇺🇸"},
-    {date:"Jul 5", city:"New York/NJ 🇺🇸"},
-    {date:"Jul 5", city:"Mexico City 🇲🇽"},
-    {date:"Jul 6", city:"Dallas 🇺🇸"},
-    {date:"Jul 6", city:"Seattle 🇺🇸"},
-    {date:"Jul 7", city:"Atlanta 🇺🇸"},
-    {date:"Jul 7", city:"Vancouver 🇨🇦"},
+    {date:"Jul 4",  city:"Houston 🇺🇸"},
+    {date:"Jul 4",  city:"Philadelphia 🇺🇸"},
+    {date:"Jul 5",  city:"New York/NJ 🇺🇸"},
+    {date:"Jul 5",  city:"Mexico City 🇲🇽"},
+    {date:"Jul 6",  city:"Dallas 🇺🇸"},
+    {date:"Jul 6",  city:"Seattle 🇺🇸"},
+    {date:"Jul 7",  city:"Atlanta 🇺🇸"},
+    {date:"Jul 7",  city:"Vancouver 🇨🇦"},
   ],
   qf: [
-    {date:"Jul 9", city:"Boston 🇺🇸"},
+    {date:"Jul 9",  city:"Boston 🇺🇸"},
     {date:"Jul 10", city:"Los Angeles 🇺🇸"},
     {date:"Jul 11", city:"Miami 🇺🇸"},
     {date:"Jul 11", city:"Kansas City 🇺🇸"},
@@ -185,7 +185,7 @@ function emptyBracket() {
     champion: null,
     groups,
     knockout: {
-      r32: Array(16).fill(null), // 16 matches
+      r32: Array(16).fill(null),   // 16 matches
       r16: Array(8).fill(null),
       qf: Array(4).fill(null),
       sf: Array(2).fill(null),
@@ -221,17 +221,20 @@ function calcScore(bracket, results) {
   return score;
 }
 
-// ── STORAGE HELPERS ─────────────────────────────────────────────────────────
-function savePool(pool) {
-  try { window.storage && window.storage.set("wc2026_pool", JSON.stringify(pool), true); } catch(e){}
-  localStorage.setItem("wc2026_pool", JSON.stringify(pool));
+// ── STORAGE HELPERS (room-scoped) ────────────────────────────────────────────
+function roomKey(code) { return `wc2026_room_${code.toUpperCase()}`; }
+function saveRoom(code, data) {
+  try { localStorage.setItem(roomKey(code), JSON.stringify(data)); } catch(e){}
 }
-function loadPool() {
+function loadRoom(code) {
   try {
-    const s = localStorage.getItem("wc2026_pool");
+    const s = localStorage.getItem(roomKey(code));
     if (s) return JSON.parse(s);
   } catch(e){}
-  return { brackets: [], adminCode: Math.random().toString(36).slice(2,8).toUpperCase(), results: null };
+  return null;
+}
+function emptyRoom(code) {
+  return { code: code.toUpperCase(), brackets: [], adminCode: Math.random().toString(36).slice(2,8).toUpperCase(), results: null };
 }
 
 // ── COMPONENTS ───────────────────────────────────────────────────────────────
@@ -351,45 +354,123 @@ function KnockoutPick({ label, teamA, teamB, winner, onPick, date, city }) {
 
 // ── MAIN APP ──────────────────────────────────────────────────────────────────
 export default function App() {
-  const [pool, setPool] = useState(loadPool);
-  const [view, setView] = useState("home"); // home | fill | leaderboard | admin
+  // Room state
+  const [roomCode, setRoomCode] = useState("");
+  const [roomInput, setRoomInput] = useState("");
+  const [room, setRoom] = useState(null); // null = not joined yet
+
+  // In-room state
+  const [view, setView] = useState("home");
   const [currentBracket, setCurrentBracket] = useState(emptyBracket);
   const [editingIdx, setEditingIdx] = useState(null);
-  const [step, setStep] = useState("name"); // name | groups | knockout | done
+  const [step, setStep] = useState("name");
   const [toast, setToast] = useState(null);
   const [adminInput, setAdminInput] = useState("");
   const [adminUnlocked, setAdminUnlocked] = useState(false);
 
-  useEffect(() => { savePool(pool); }, [pool]);
+  // Persist room whenever it changes
+  useEffect(() => {
+    if (room && roomCode) saveRoom(roomCode, room);
+  }, [room, roomCode]);
 
   const showToast = (msg, color="green") => {
     setToast({msg, color});
     setTimeout(() => setToast(null), 3000);
   };
 
-  // derive knockout slots from group picks
-  function getKnockoutTeam(bracket, slot) {
-    // slot 0..15 for r32
-    // Each group gives 1st and 2nd; 8 best 3rd place also advance (simplified: use group 1sts/2nds)
-    const g = Object.keys(REAL_GROUPS);
-    const adv = [];
-    g.forEach(k => {
-      adv.push(bracket.groups[k][0] || null);
-      adv.push(bracket.groups[k][1] || null);
-    });
-    // 24 teams advance; pair them for r32 (8 3rd-placers skipped for simplicity)
-    return adv[slot] || null;
+  function joinRoom(code) {
+    const key = code.trim().toUpperCase();
+    if (!key) return;
+    const existing = loadRoom(key);
+    if (existing) {
+      setRoom(existing);
+    } else {
+      const fresh = emptyRoom(key);
+      saveRoom(key, fresh);
+      setRoom(fresh);
+    }
+    setRoomCode(key);
+    setView("home");
+    setAdminUnlocked(false);
   }
+
+  function leaveRoom() {
+    setRoom(null);
+    setRoomCode("");
+    setRoomInput("");
+    setView("home");
+    setAdminUnlocked(false);
+  }
+
+  // ── ROOM JOIN SCREEN ──
+  if (!room) {
+    return (
+      <div style={{
+        minHeight:"100vh",
+        background:"linear-gradient(135deg, #0a1628 0%, #1a3a5c 40%, #0d2137 100%)",
+        fontFamily:"'Fredoka One', 'Nunito', sans-serif",
+      }}>
+        <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+        {toast && (
+          <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-2xl font-bold text-white shadow-2xl
+            ${toast.color==="green"?"bg-green-500":"bg-red-500"}`}>
+            {toast.msg}
+          </div>
+        )}
+        <div className="max-w-md mx-auto px-4 py-16 flex flex-col items-center gap-8">
+          <div className="text-center">
+            <div className="text-6xl mb-4">🌍⚽🏆</div>
+            <h1 style={{fontFamily:"'Fredoka One',sans-serif"}} className="text-4xl text-white font-black mb-2">
+              Family Bracket
+            </h1>
+            <p className="text-yellow-400 font-bold">FIFA World Cup 2026</p>
+          </div>
+
+          <div className="w-full bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/20 space-y-5">
+            <div className="text-center">
+              <div className="text-3xl mb-2">🔑</div>
+              <h2 className="text-white text-xl font-black">Enter Your Room Code</h2>
+              <p className="text-white/50 text-sm mt-1">Each group has its own private room. Create one or join an existing one.</p>
+            </div>
+
+            <input
+              type="text"
+              placeholder="e.g. FAMILY2026"
+              value={roomInput}
+              onChange={e => setRoomInput(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,""))}
+              onKeyDown={e => e.key==="Enter" && roomInput.trim() && joinRoom(roomInput)}
+              className="w-full bg-white/10 border-2 border-white/20 rounded-2xl px-5 py-4 text-white text-xl font-black uppercase tracking-widest placeholder-white/30 focus:outline-none focus:border-yellow-400 transition-all text-center"
+              maxLength={16}
+            />
+
+            <button
+              disabled={!roomInput.trim()}
+              onClick={() => joinRoom(roomInput)}
+              className="w-full bg-yellow-400 disabled:bg-white/20 disabled:text-white/30 text-gray-900 font-black text-xl rounded-2xl py-4 transition-all active:scale-95">
+              {roomInput && loadRoom(roomInput.toUpperCase()) ? "🚪 Join Room" : "✨ Create Room"}
+            </button>
+
+            <div className="border-t border-white/10 pt-4 space-y-2 text-sm text-white/40 text-center">
+              <p>💡 Share the same code with your group</p>
+              <p>🔒 Different code = different private pool</p>
+              <p>👨‍👩‍👧‍👦 Family uses <span className="text-white/60 font-bold">FAMILY2026</span></p>
+              <p>👯 Friends use <span className="text-white/60 font-bold">FRIENDS2026</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── HELPERS (inside room) ──
+  const showRoom = room;
 
   function saveCurrentBracket() {
     const b = { ...currentBracket };
-    const updated = [...pool.brackets];
-    if (editingIdx !== null) {
-      updated[editingIdx] = b;
-    } else {
-      updated.push(b);
-    }
-    setPool(p => ({ ...p, brackets: updated }));
+    const updated = [...room.brackets];
+    if (editingIdx !== null) { updated[editingIdx] = b; }
+    else { updated.push(b); }
+    setRoom(r => ({ ...r, brackets: updated }));
     showToast("🎉 Bracket saved!");
     setView("leaderboard");
   }
@@ -402,7 +483,7 @@ export default function App() {
   }
 
   function editBracket(idx) {
-    setCurrentBracket({ ...pool.brackets[idx] });
+    setCurrentBracket({ ...room.brackets[idx] });
     setEditingIdx(idx);
     setStep("groups");
     setView("fill");
@@ -412,15 +493,11 @@ export default function App() {
     currentBracket.groups[k][0] && currentBracket.groups[k][1]
   );
 
-  // Build r32 matchups from group picks
   const r32Teams = (() => {
     const g = Object.keys(REAL_GROUPS);
-    // Simplified pairing: A1 vs B2, B1 vs A2, etc. (12 groups → 24 teams → 16 matches with 8 best 3rds)
-    // For simplicity: pair group winners against runners-up from adjacent groups
-    const pairs = [];
     const winners = g.map(k => currentBracket.groups[k][0]);
     const runners = g.map(k => currentBracket.groups[k][1]);
-    // 8 matches: A1vsB2, B1vsA2, C1vsD2, D1vsC2, E1vsF2, F1vsE2, G1vsH2, H1vsG2
+    const pairs = [];
     for (let i = 0; i < 8; i++) {
       pairs.push([winners[i*2] || null, runners[i*2+1] || null]);
       pairs.push([winners[i*2+1] || null, runners[i*2] || null]);
@@ -431,26 +508,15 @@ export default function App() {
   function pickKnockout(round, idx, team) {
     setCurrentBracket(b => {
       const ko = { ...b.knockout };
-      if (round === "final") {
-        ko.final = team;
-        return { ...b, knockout: ko, champion: team };
-      }
-      const arr = [...ko[round]];
-      arr[idx] = team;
-      ko[round] = arr;
-      // clear downstream
+      if (round === "final") { ko.final = team; return { ...b, knockout: ko, champion: team }; }
+      const arr = [...ko[round]]; arr[idx] = team; ko[round] = arr;
       if (round === "r32") { ko.r16 = Array(8).fill(null); ko.qf = Array(4).fill(null); ko.sf = Array(2).fill(null); ko.final = null; }
       if (round === "r16") { ko.qf = Array(4).fill(null); ko.sf = Array(2).fill(null); ko.final = null; }
-      if (round === "qf") { ko.sf = Array(2).fill(null); ko.final = null; }
-      if (round === "sf") { ko.final = null; }
+      if (round === "qf")  { ko.sf = Array(2).fill(null); ko.final = null; }
+      if (round === "sf")  { ko.final = null; }
       return { ...b, knockout: ko };
     });
   }
-
-  const shareUrl = () => {
-    const data = encodeURIComponent(JSON.stringify(pool.brackets));
-    return `${window.location.href.split("?")[0]}?brackets=${data}`;
-  };
 
   return (
     <div style={{
@@ -460,7 +526,6 @@ export default function App() {
     }}>
       <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
 
-      {/* Toast */}
       {toast && (
         <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-2xl font-bold text-white shadow-2xl
           ${toast.color==="green"?"bg-green-500":"bg-red-500"}`}>
@@ -473,17 +538,26 @@ export default function App() {
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
           <button onClick={() => setView("home")} className="flex items-center gap-2">
             <span className="text-2xl">⚽</span>
-            <span style={{fontFamily:"'Fredoka One',sans-serif"}} className="text-white text-xl font-black">WC 2026</span>
+            <div>
+              <span style={{fontFamily:"'Fredoka One',sans-serif"}} className="text-white text-lg font-black">WC 2026</span>
+              <span className="ml-2 bg-yellow-400/20 border border-yellow-400/40 text-yellow-400 text-xs font-black px-2 py-0.5 rounded-lg">
+                🔑 {roomCode}
+              </span>
+            </div>
           </button>
-          <div className="flex gap-2">
+          <div className="flex gap-1 items-center">
             {["home","leaderboard","admin"].map(v => (
               <button key={v} onClick={() => setView(v)}
-                className={`px-3 py-1.5 rounded-xl text-sm font-bold transition-all capitalize
+                className={`px-2 py-1.5 rounded-xl text-sm font-bold transition-all
                   ${view===v ? "bg-yellow-400 text-gray-900" : "text-white/60 hover:text-white"}`}>
                 {v==="home"?"🏠":v==="leaderboard"?"🏆":"⚙️"}
-                <span className="hidden sm:inline ml-1 capitalize">{v}</span>
               </button>
             ))}
+            <button onClick={leaveRoom}
+              className="ml-1 px-2 py-1.5 rounded-xl text-sm font-bold text-white/40 hover:text-white hover:bg-white/10 transition-all"
+              title="Switch room">
+              🚪
+            </button>
           </div>
         </div>
       </div>
@@ -493,13 +567,16 @@ export default function App() {
         {/* ── HOME ── */}
         {view === "home" && (
           <div className="space-y-6">
-            <div className="text-center py-6">
-              <div className="text-6xl mb-3">🌍⚽🏆</div>
-              <h1 style={{fontFamily:"'Fredoka One',sans-serif"}} className="text-4xl text-white font-black mb-2">
+            <div className="text-center py-4">
+              <div className="text-5xl mb-3">🌍⚽🏆</div>
+              <h1 style={{fontFamily:"'Fredoka One',sans-serif"}} className="text-4xl text-white font-black mb-1">
                 Family Bracket
               </h1>
-              <p className="text-white/60 text-lg">FIFA World Cup 2026</p>
-              <p className="text-yellow-400 font-bold mt-1">June 11 – July 19 · USA/CAN/MEX</p>
+              <p className="text-yellow-400 font-bold">FIFA World Cup 2026</p>
+              <div className="mt-2 inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-xl px-4 py-2">
+                <span className="text-white/50 text-sm">Room:</span>
+                <span className="text-yellow-400 font-black tracking-widest">{roomCode}</span>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -515,11 +592,11 @@ export default function App() {
               </button>
             </div>
 
-            {pool.brackets.length > 0 && (
+            {room.brackets.length > 0 && (
               <div className="bg-white/10 rounded-2xl p-4 border border-white/20">
-                <h3 className="text-white font-black mb-3">👨‍👩‍👧‍👦 Your Family's Brackets</h3>
+                <h3 className="text-white font-black mb-3">👨‍👩‍👧‍👦 Brackets in this room</h3>
                 <div className="space-y-2">
-                  {pool.brackets.map((b, i) => (
+                  {room.brackets.map((b, i) => (
                     <button key={i} onClick={() => editBracket(i)}
                       className="w-full flex items-center justify-between bg-white/5 hover:bg-white/10 rounded-xl px-4 py-3 border border-white/10 transition-all">
                       <div className="flex items-center gap-3">
@@ -537,25 +614,31 @@ export default function App() {
             )}
 
             <div className="bg-blue-500/20 border border-blue-400/30 rounded-2xl p-4">
-              <h3 className="text-blue-300 font-black mb-2">📱 Share with Family</h3>
-              <p className="text-white/60 text-sm mb-3">Everyone fills their bracket on this same link. Share it via WhatsApp!</p>
-              <button onClick={() => {
-                  navigator.clipboard.writeText(window.location.href);
-                  showToast("📋 Link copied!");
-                }}
-                className="w-full bg-blue-500 hover:bg-blue-400 text-white font-black rounded-xl py-3 transition-all">
-                📋 Copy Link to Share
-              </button>
+              <h3 className="text-blue-300 font-black mb-2">📱 Invite to this room</h3>
+              <p className="text-white/60 text-sm mb-1">Share the link + your room code with your group.</p>
+              <p className="text-white/40 text-xs mb-3">Only people with this code can see this leaderboard.</p>
+              <div className="flex gap-2">
+                <div className="flex-1 bg-black/30 rounded-xl px-4 py-3 text-yellow-400 font-black tracking-widest text-center text-lg border border-yellow-400/30">
+                  {roomCode}
+                </div>
+                <button onClick={() => {
+                    navigator.clipboard.writeText(`${window.location.href.split("?")[0]} — Room code: ${roomCode}`);
+                    showToast("📋 Copied link + code!");
+                  }}
+                  className="bg-blue-500 hover:bg-blue-400 text-white font-black rounded-xl px-4 transition-all">
+                  📋 Copy
+                </button>
+              </div>
             </div>
 
-            <div className="bg-white/5 rounded-2xl p-4 border border-white/10 text-white/60 text-sm">
-              <div className="font-bold text-white mb-2">🎯 How scoring works</div>
-              <div className="space-y-1">
-                <div>✅ Correct group 1st/2nd: <span className="text-yellow-400 font-bold">2 pts</span></div>
-                <div>✅ Round of 32 winner: <span className="text-yellow-400 font-bold">2 pts</span></div>
-                <div>✅ Round of 16 winner: <span className="text-yellow-400 font-bold">4 pts</span></div>
-                <div>✅ Quarter-final winner: <span className="text-yellow-400 font-bold">6 pts</span></div>
-                <div>✅ Semi-final winner: <span className="text-yellow-400 font-bold">8 pts</span></div>
+            <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
+              <div className="font-bold text-white mb-2">🎯 Scoring</div>
+              <div className="grid grid-cols-2 gap-1 text-sm text-white/60">
+                <div>✅ Group picks: <span className="text-yellow-400 font-bold">2 pts</span></div>
+                <div>✅ Round of 32: <span className="text-yellow-400 font-bold">2 pts</span></div>
+                <div>✅ Round of 16: <span className="text-yellow-400 font-bold">4 pts</span></div>
+                <div>✅ Quarter-final: <span className="text-yellow-400 font-bold">6 pts</span></div>
+                <div>✅ Semi-final: <span className="text-yellow-400 font-bold">8 pts</span></div>
                 <div>✅ Champion: <span className="text-yellow-400 font-bold">12 pts</span></div>
               </div>
             </div>
@@ -565,7 +648,6 @@ export default function App() {
         {/* ── FILL BRACKET ── */}
         {view === "fill" && (
           <div className="space-y-5">
-            {/* Progress */}
             <div className="flex items-center gap-2">
               {["name","groups","knockout","done"].map((s,i) => (
                 <div key={s} className={`flex-1 h-2 rounded-full transition-all
@@ -573,7 +655,6 @@ export default function App() {
               ))}
             </div>
 
-            {/* STEP: Name */}
             {step === "name" && (
               <div className="space-y-5">
                 <div className="text-center">
@@ -581,24 +662,18 @@ export default function App() {
                   <h2 className="text-white text-2xl font-black">What's your name?</h2>
                   <p className="text-white/50 text-sm mt-1">So everyone knows whose bracket this is!</p>
                 </div>
-                <input
-                  type="text"
-                  placeholder="e.g. Dad, Emma, Uncle Carlos…"
+                <input type="text" placeholder="e.g. Dad, Emma, Uncle Carlos…"
                   value={currentBracket.name}
                   onChange={e => setCurrentBracket(b => ({...b, name:e.target.value}))}
                   className="w-full bg-white/10 border-2 border-white/20 rounded-2xl px-5 py-4 text-white text-xl font-bold placeholder-white/30 focus:outline-none focus:border-yellow-400 transition-all"
-                  maxLength={20}
-                />
-                <button
-                  disabled={!currentBracket.name.trim()}
-                  onClick={() => setStep("groups")}
+                  maxLength={20}/>
+                <button disabled={!currentBracket.name.trim()} onClick={() => setStep("groups")}
                   className="w-full bg-yellow-400 disabled:bg-white/20 disabled:text-white/30 text-gray-900 font-black text-xl rounded-2xl py-4 transition-all active:scale-95">
                   Next: Pick Groups →
                 </button>
               </div>
             )}
 
-            {/* STEP: Groups */}
             {step === "groups" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -611,24 +686,19 @@ export default function App() {
                 {Object.keys(REAL_GROUPS).map(k => (
                   <GroupCard key={k} groupKey={k} group={REAL_GROUPS[k]}
                     picks={currentBracket.groups[k]}
-                    onChange={picks => setCurrentBracket(b => ({...b, groups:{...b.groups,[k]:picks}}))}
-                  />
+                    onChange={picks => setCurrentBracket(b => ({...b, groups:{...b.groups,[k]:picks}}))}/>
                 ))}
-                <button
-                  disabled={!allGroupsFilled}
-                  onClick={() => setStep("knockout")}
+                <button disabled={!allGroupsFilled} onClick={() => setStep("knockout")}
                   className="w-full bg-yellow-400 disabled:bg-white/20 disabled:text-white/30 text-gray-900 font-black text-xl rounded-2xl py-4 transition-all active:scale-95 sticky bottom-4">
                   {allGroupsFilled ? "Next: Knockout Rounds →" : `Fill all 12 groups first (${Object.keys(REAL_GROUPS).filter(k=>currentBracket.groups[k][0]&&currentBracket.groups[k][1]).length}/12)`}
                 </button>
               </div>
             )}
 
-            {/* STEP: Knockout */}
             {step === "knockout" && (
               <div className="space-y-5">
                 <h2 className="text-white text-xl font-black">🔥 Knockout Rounds</h2>
 
-                {/* R32 */}
                 <div>
                   <h3 className="text-yellow-400 font-bold mb-3">Round of 32 · Jun 28 – Jul 3</h3>
                   <div className="grid grid-cols-1 gap-2">
@@ -638,12 +708,11 @@ export default function App() {
                         winner={currentBracket.knockout.r32[i]}
                         onPick={t => pickKnockout("r32", i, t)}
                         date={KNOCKOUT_SCHEDULE.r32[i].date}
-                        city={KNOCKOUT_SCHEDULE.r32[i].city} />
+                        city={KNOCKOUT_SCHEDULE.r32[i].city}/>
                     ))}
                   </div>
                 </div>
 
-                {/* R16 */}
                 {currentBracket.knockout.r32.filter(Boolean).length >= 8 && (
                   <div>
                     <h3 className="text-blue-300 font-bold mb-3">Round of 16 · Jul 4 – 7</h3>
@@ -655,13 +724,12 @@ export default function App() {
                           winner={currentBracket.knockout.r16[i]}
                           onPick={t => pickKnockout("r16", i, t)}
                           date={KNOCKOUT_SCHEDULE.r16[i].date}
-                          city={KNOCKOUT_SCHEDULE.r16[i].city} />
+                          city={KNOCKOUT_SCHEDULE.r16[i].city}/>
                       ))}
                     </div>
                   </div>
                 )}
 
-                {/* QF */}
                 {currentBracket.knockout.r16.filter(Boolean).length >= 4 && (
                   <div>
                     <h3 className="text-green-300 font-bold mb-3">⚡ Quarter-Finals · Jul 9 – 11</h3>
@@ -673,13 +741,12 @@ export default function App() {
                           winner={currentBracket.knockout.qf[i]}
                           onPick={t => pickKnockout("qf", i, t)}
                           date={KNOCKOUT_SCHEDULE.qf[i].date}
-                          city={KNOCKOUT_SCHEDULE.qf[i].city} />
+                          city={KNOCKOUT_SCHEDULE.qf[i].city}/>
                       ))}
                     </div>
                   </div>
                 )}
 
-                {/* SF */}
                 {currentBracket.knockout.qf.filter(Boolean).length >= 2 && (
                   <div>
                     <h3 className="text-orange-300 font-bold mb-3">🌟 Semi-Finals · Jul 14 – 15</h3>
@@ -691,13 +758,12 @@ export default function App() {
                           winner={currentBracket.knockout.sf[i]}
                           onPick={t => pickKnockout("sf", i, t)}
                           date={KNOCKOUT_SCHEDULE.sf[i].date}
-                          city={KNOCKOUT_SCHEDULE.sf[i].city} />
+                          city={KNOCKOUT_SCHEDULE.sf[i].city}/>
                       ))}
                     </div>
                   </div>
                 )}
 
-                {/* Final */}
                 {currentBracket.knockout.sf.filter(Boolean).length === 2 && (
                   <div>
                     <h3 className="text-yellow-400 font-black text-xl mb-3">🏆 THE FINAL · Jul 19</h3>
@@ -707,7 +773,7 @@ export default function App() {
                       winner={currentBracket.champion}
                       onPick={t => { pickKnockout("final", 0, t); setCurrentBracket(b=>({...b,champion:t})); }}
                       date={KNOCKOUT_SCHEDULE.final.date}
-                      city={KNOCKOUT_SCHEDULE.final.city} />
+                      city={KNOCKOUT_SCHEDULE.final.city}/>
                   </div>
                 )}
 
@@ -733,9 +799,14 @@ export default function App() {
         {/* ── LEADERBOARD ── */}
         {view === "leaderboard" && (
           <div className="space-y-5">
-            <h2 className="text-white text-2xl font-black">🏆 Leaderboard</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-white text-2xl font-black">🏆 Leaderboard</h2>
+              <span className="bg-white/10 border border-white/20 text-white/60 text-xs font-bold px-3 py-1 rounded-xl">
+                🔑 {roomCode}
+              </span>
+            </div>
 
-            {pool.brackets.length === 0 ? (
+            {room.brackets.length === 0 ? (
               <div className="text-center py-12">
                 <div className="text-5xl mb-4">📭</div>
                 <div className="text-white/60">No brackets yet! Be the first to fill one.</div>
@@ -745,8 +816,8 @@ export default function App() {
               </div>
             ) : (
               <div className="space-y-3">
-                {[...pool.brackets]
-                  .map((b, i) => ({ ...b, idx: i, score: calcScore(b, pool.results) }))
+                {[...room.brackets]
+                  .map((b, i) => ({ ...b, idx: i, score: calcScore(b, room.results) }))
                   .sort((a, b) => b.score - a.score)
                   .map((b, rank) => (
                     <div key={b.idx}
@@ -779,7 +850,6 @@ export default function App() {
                   ))}
               </div>
             )}
-
             <button onClick={startNewBracket}
               className="w-full bg-yellow-400 text-gray-900 font-black rounded-2xl py-4 text-lg">
               ✏️ Add Another Bracket
@@ -790,41 +860,38 @@ export default function App() {
         {/* ── ADMIN ── */}
         {view === "admin" && (
           <div className="space-y-5">
-            <h2 className="text-white text-2xl font-black">⚙️ Admin Panel</h2>
+            <h2 className="text-white text-2xl font-black">⚙️ Admin · {roomCode}</h2>
             {!adminUnlocked ? (
               <div className="space-y-4">
-                <p className="text-white/60">Enter your admin code to manage the pool.</p>
+                <p className="text-white/60">Enter the admin code for room <span className="text-yellow-400 font-bold">{roomCode}</span>.</p>
                 <input value={adminInput} onChange={e=>setAdminInput(e.target.value.toUpperCase())}
-                  placeholder="Admin code…" maxLength={6}
+                  placeholder="Admin code…" maxLength={8}
                   className="w-full bg-white/10 border-2 border-white/20 rounded-2xl px-5 py-4 text-white text-xl font-bold uppercase tracking-widest placeholder-white/30 focus:outline-none focus:border-yellow-400 transition-all text-center"/>
                 <button onClick={() => {
-                    if (adminInput === pool.adminCode) { setAdminUnlocked(true); }
+                    if (adminInput === room.adminCode) { setAdminUnlocked(true); }
                     else showToast("Wrong code!", "red");
                   }}
                   className="w-full bg-yellow-400 text-gray-900 font-black rounded-2xl py-4 text-lg">
                   Unlock
                 </button>
                 <div className="bg-white/5 rounded-2xl p-4 text-white/40 text-sm text-center">
-                  Your admin code is shown only once when you first use this device.<br/>
-                  <span className="text-yellow-400 font-bold text-lg tracking-widest">{pool.adminCode}</span><br/>
-                  <span className="text-white/30 text-xs">Save this somewhere safe!</span>
+                  Admin code for this room:<br/>
+                  <span className="text-yellow-400 font-bold text-lg tracking-widest">{room.adminCode}</span><br/>
+                  <span className="text-white/30 text-xs">Save this — it's only shown here.</span>
                 </div>
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="bg-green-500/20 border border-green-400/40 rounded-2xl p-4 text-green-300 font-bold">
-                  ✅ Admin unlocked
-                </div>
-
+                <div className="bg-green-500/20 border border-green-400/40 rounded-2xl p-4 text-green-300 font-bold">✅ Admin unlocked</div>
                 <div className="bg-white/10 rounded-2xl p-4 border border-white/20 space-y-3">
                   <h3 className="text-white font-black">🗑️ Manage Brackets</h3>
-                  {pool.brackets.length === 0 && <p className="text-white/40 text-sm">No brackets yet.</p>}
-                  {pool.brackets.map((b, i) => (
+                  {room.brackets.length === 0 && <p className="text-white/40 text-sm">No brackets yet.</p>}
+                  {room.brackets.map((b, i) => (
                     <div key={i} className="flex items-center justify-between bg-white/5 rounded-xl px-4 py-3">
                       <span className="text-white font-bold">{b.name||"Unnamed"}</span>
                       <button onClick={() => {
-                          const updated = pool.brackets.filter((_,j)=>j!==i);
-                          setPool(p=>({...p,brackets:updated}));
+                          const updated = room.brackets.filter((_,j)=>j!==i);
+                          setRoom(r=>({...r,brackets:updated}));
                           showToast("Bracket removed");
                         }}
                         className="bg-red-500/30 hover:bg-red-500/50 text-red-300 rounded-lg px-3 py-1 text-sm font-bold">
@@ -833,14 +900,13 @@ export default function App() {
                     </div>
                   ))}
                 </div>
-
                 <div className="bg-white/10 rounded-2xl p-4 border border-white/20 space-y-3">
-                  <h3 className="text-white font-black">🔄 Reset Pool</h3>
-                  <p className="text-white/50 text-sm">This will delete ALL brackets. Cannot be undone!</p>
+                  <h3 className="text-white font-black">🔄 Reset Room</h3>
+                  <p className="text-white/50 text-sm">Deletes ALL brackets in <span className="text-yellow-400">{roomCode}</span>. Cannot be undone!</p>
                   <button onClick={() => {
-                      if (window.confirm("Delete all brackets?")) {
-                        setPool(p=>({...p,brackets:[]}));
-                        showToast("Pool reset!");
+                      if (window.confirm(`Delete all brackets in room ${roomCode}?`)) {
+                        setRoom(r=>({...r,brackets:[]}));
+                        showToast("Room reset!");
                       }
                     }}
                     className="w-full bg-red-500/30 hover:bg-red-500/50 text-red-300 font-black rounded-xl py-3">
