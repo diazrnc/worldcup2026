@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
+
 // --- DATA ---
 const GROUPS = {
   A: ["Mexico","South Africa","South Korea","Czech Republic"],
