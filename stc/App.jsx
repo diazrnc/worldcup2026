@@ -15,23 +15,163 @@ const GROUPS = {
   K: ["Portugal","DR Congo","Uzbekistan","Colombia"],
   L: ["England","Croatia","Ghana","Panama"],
 };
-// Actual 2026 groups (simplified for fun)
+
+// Actual 2026 groups with match schedules
 const REAL_GROUPS = {
-  A: { name:"A", teams:[{f:"🇲🇽",n:"Mexico"},{f:"🇿🇦",n:"South Africa"},{f:"🇰🇷",n:"South Korea"},{f:"🇨🇿",n:"Czechia"}]},
-  B: { name:"B", teams:[{f:"🇨🇦",n:"Canada"},{f:"🇧🇦",n:"Bosnia-Herzegovina"},{f:"🇶🇦",n:"Qatar"},{f:"🇨🇭",n:"Switzerland"}]},
-  C: { name:"C", teams:[{f:"🇧🇷",n:"Brazil"},{f:"🇲🇦",n:"Morocco"},{f:"🇭🇹",n:"Haiti"},{f:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",n:"Scotland"}]},
-  D: { name:"D", teams:[{f:"🇺🇸",n:"USA"},{f:"🇵🇾",n:"Paraguay"},{f:"🇦🇺",n:"Australia"},{f:"🇹🇷",n:"Turkey"}]},
-  E: { name:"E", teams:[{f:"🇩🇪",n:"Germany"},{f:"🇨🇼",n:"Curaçao"},{f:"🇨🇮",n:"Ivory Coast"},{f:"🇪🇨",n:"Ecuador"}]},
-  F: { name:"F", teams:[{f:"🇳🇱",n:"Netherlands"},{f:"🇯🇵",n:"Japan"},{f:"🇸🇪",n:"Sweden"},{f:"🇹🇳",n:"Tunisia"}]},
-  G: { name:"G", teams:[{f:"🇧🇪",n:"Belgium"},{f:"🇪🇬",n:"Egypt"},{f:"🇮🇷",n:"Iran"},{f:"🇳🇿",n:"New Zealand"}]},
-  H: { name:"H", teams:[{f:"🇪🇸",n:"Spain"},{f:"🇨🇻",n:"Cape Verde"},{f:"🇸🇦",n:"Saudi Arabia"},{f:"🇺🇾",n:"Uruguay"}]},
-  I: { name:"I", teams:[{f:"🇫🇷",n:"France"},{f:"🇸🇳",n:"Senegal"},{f:"🇮🇶",n:"Iraq"},{f:"🇳🇴",n:"Norway"}]},
-  J: { name:"J", teams:[{f:"🇦🇷",n:"Argentina"},{f:"🇩🇿",n:"Algeria"},{f:"🇦🇹",n:"Austria"},{f:"🇯🇴",n:"Jordan"}]},
-  K: { name:"K", teams:[{f:"🇵🇹",n:"Portugal"},{f:"🇨🇩",n:"DR Congo"},{f:"🇺🇿",n:"Uzbekistan"},{f:"🇨🇴",n:"Colombia"}]},
-  L: { name:"L", teams:[{f:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",n:"England"},{f:"🇭🇷",n:"Croatia"},{f:"🇬🇭",n:"Ghana"},{f:"🇵🇦",n:"Panama"}]},
+  A: { name:"A", teams:[{f:"🇲🇽",n:"Mexico"},{f:"🇿🇦",n:"South Africa"},{f:"🇰🇷",n:"South Korea"},{f:"🇨🇿",n:"Czechia"}],
+    matches:[
+      {date:"Jun 11",teams:"Mexico vs South Africa",city:"Mexico City 🇲🇽"},
+      {date:"Jun 11",teams:"South Korea vs Czechia",city:"Guadalajara 🇲🇽"},
+      {date:"Jun 15",teams:"Mexico vs South Korea",city:"Dallas 🇺🇸"},
+      {date:"Jun 15",teams:"South Africa vs Czechia",city:"Atlanta 🇺🇸"},
+      {date:"Jun 19",teams:"Mexico vs Czechia",city:"Houston 🇺🇸"},
+      {date:"Jun 19",teams:"South Africa vs South Korea",city:"Kansas City 🇺🇸"},
+    ]},
+  B: { name:"B", teams:[{f:"🇨🇦",n:"Canada"},{f:"🇧🇦",n:"Bosnia-Herzegovina"},{f:"🇶🇦",n:"Qatar"},{f:"🇨🇭",n:"Switzerland"}],
+    matches:[
+      {date:"Jun 12",teams:"Canada vs Bosnia-Herzegovina",city:"Toronto 🇨🇦"},
+      {date:"Jun 13",teams:"Qatar vs Switzerland",city:"Dallas 🇺🇸"},
+      {date:"Jun 16",teams:"Canada vs Qatar",city:"Vancouver 🇨🇦"},
+      {date:"Jun 17",teams:"Switzerland vs Bosnia-Herzegovina",city:"Seattle 🇺🇸"},
+      {date:"Jun 21",teams:"Canada vs Switzerland",city:"Vancouver 🇨🇦"},
+      {date:"Jun 21",teams:"Bosnia-Herzegovina vs Qatar",city:"Philadelphia 🇺🇸"},
+    ]},
+  C: { name:"C", teams:[{f:"🇧🇷",n:"Brazil"},{f:"🇲🇦",n:"Morocco"},{f:"🇭🇹",n:"Haiti"},{f:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",n:"Scotland"}],
+    matches:[
+      {date:"Jun 13",teams:"Brazil vs Morocco",city:"New York/NJ 🇺🇸"},
+      {date:"Jun 13",teams:"Haiti vs Scotland",city:"Boston 🇺🇸"},
+      {date:"Jun 17",teams:"Brazil vs Haiti",city:"San Francisco 🇺🇸"},
+      {date:"Jun 17",teams:"Morocco vs Scotland",city:"Miami 🇺🇸"},
+      {date:"Jun 21",teams:"Brazil vs Scotland",city:"Atlanta 🇺🇸"},
+      {date:"Jun 21",teams:"Morocco vs Haiti",city:"Los Angeles 🇺🇸"},
+    ]},
+  D: { name:"D", teams:[{f:"🇺🇸",n:"USA"},{f:"🇵🇾",n:"Paraguay"},{f:"🇦🇺",n:"Australia"},{f:"🇹🇷",n:"Turkey"}],
+    matches:[
+      {date:"Jun 12",teams:"USA vs Paraguay",city:"Los Angeles 🇺🇸"},
+      {date:"Jun 13",teams:"Australia vs Turkey",city:"Vancouver 🇨🇦"},
+      {date:"Jun 17",teams:"USA vs Australia",city:"New York/NJ 🇺🇸"},
+      {date:"Jun 17",teams:"Turkey vs Paraguay",city:"Houston 🇺🇸"},
+      {date:"Jun 21",teams:"USA vs Turkey",city:"Seattle 🇺🇸"},
+      {date:"Jun 21",teams:"Australia vs Paraguay",city:"Kansas City 🇺🇸"},
+    ]},
+  E: { name:"E", teams:[{f:"🇩🇪",n:"Germany"},{f:"🇨🇼",n:"Curaçao"},{f:"🇨🇮",n:"Ivory Coast"},{f:"🇪🇨",n:"Ecuador"}],
+    matches:[
+      {date:"Jun 14",teams:"Germany vs Curaçao",city:"Philadelphia 🇺🇸"},
+      {date:"Jun 14",teams:"Ivory Coast vs Ecuador",city:"Boston 🇺🇸"},
+      {date:"Jun 18",teams:"Germany vs Ivory Coast",city:"Dallas 🇺🇸"},
+      {date:"Jun 18",teams:"Ecuador vs Curaçao",city:"Miami 🇺🇸"},
+      {date:"Jun 22",teams:"Germany vs Ecuador",city:"Los Angeles 🇺🇸"},
+      {date:"Jun 22",teams:"Ivory Coast vs Curaçao",city:"Atlanta 🇺🇸"},
+    ]},
+  F: { name:"F", teams:[{f:"🇳🇱",n:"Netherlands"},{f:"🇯🇵",n:"Japan"},{f:"🇸🇪",n:"Sweden"},{f:"🇹🇳",n:"Tunisia"}],
+    matches:[
+      {date:"Jun 14",teams:"Netherlands vs Tunisia",city:"Kansas City 🇺🇸"},
+      {date:"Jun 14",teams:"Japan vs Sweden",city:"Houston 🇺🇸"},
+      {date:"Jun 18",teams:"Netherlands vs Japan",city:"San Francisco 🇺🇸"},
+      {date:"Jun 19",teams:"Sweden vs Tunisia",city:"Seattle 🇺🇸"},
+      {date:"Jun 22",teams:"Netherlands vs Sweden",city:"Miami 🇺🇸"},
+      {date:"Jun 22",teams:"Japan vs Tunisia",city:"New York/NJ 🇺🇸"},
+    ]},
+  G: { name:"G", teams:[{f:"🇧🇪",n:"Belgium"},{f:"🇪🇬",n:"Egypt"},{f:"🇮🇷",n:"Iran"},{f:"🇳🇿",n:"New Zealand"}],
+    matches:[
+      {date:"Jun 15",teams:"Belgium vs Egypt",city:"Monterrey 🇲🇽"},
+      {date:"Jun 15",teams:"Iran vs New Zealand",city:"Guadalajara 🇲🇽"},
+      {date:"Jun 19",teams:"Belgium vs Iran",city:"Boston 🇺🇸"},
+      {date:"Jun 19",teams:"Egypt vs New Zealand",city:"Philadelphia 🇺🇸"},
+      {date:"Jun 23",teams:"Belgium vs New Zealand",city:"Seattle 🇺🇸"},
+      {date:"Jun 23",teams:"Egypt vs Iran",city:"Dallas 🇺🇸"},
+    ]},
+  H: { name:"H", teams:[{f:"🇪🇸",n:"Spain"},{f:"🇨🇻",n:"Cape Verde"},{f:"🇸🇦",n:"Saudi Arabia"},{f:"🇺🇾",n:"Uruguay"}],
+    matches:[
+      {date:"Jun 15",teams:"Spain vs Uruguay",city:"Kansas City 🇺🇸"},
+      {date:"Jun 15",teams:"Cape Verde vs Saudi Arabia",city:"Atlanta 🇺🇸"},
+      {date:"Jun 19",teams:"Spain vs Cape Verde",city:"Houston 🇺🇸"},
+      {date:"Jun 20",teams:"Uruguay vs Saudi Arabia",city:"Los Angeles 🇺🇸"},
+      {date:"Jun 23",teams:"Spain vs Saudi Arabia",city:"Miami 🇺🇸"},
+      {date:"Jun 23",teams:"Cape Verde vs Uruguay",city:"San Francisco 🇺🇸"},
+    ]},
+  I: { name:"I", teams:[{f:"🇫🇷",n:"France"},{f:"🇸🇳",n:"Senegal"},{f:"🇮🇶",n:"Iraq"},{f:"🇳🇴",n:"Norway"}],
+    matches:[
+      {date:"Jun 16",teams:"France vs Senegal",city:"New York/NJ 🇺🇸"},
+      {date:"Jun 16",teams:"Iraq vs Norway",city:"Los Angeles 🇺🇸"},
+      {date:"Jun 20",teams:"France vs Iraq",city:"Atlanta 🇺🇸"},
+      {date:"Jun 20",teams:"Norway vs Senegal",city:"Kansas City 🇺🇸"},
+      {date:"Jun 24",teams:"France vs Norway",city:"Dallas 🇺🇸"},
+      {date:"Jun 24",teams:"Senegal vs Iraq",city:"Houston 🇺🇸"},
+    ]},
+  J: { name:"J", teams:[{f:"🇦🇷",n:"Argentina"},{f:"🇩🇿",n:"Algeria"},{f:"🇦🇹",n:"Austria"},{f:"🇯🇴",n:"Jordan"}],
+    matches:[
+      {date:"Jun 16",teams:"Argentina vs Algeria",city:"Miami 🇺🇸"},
+      {date:"Jun 17",teams:"Austria vs Jordan",city:"Boston 🇺🇸"},
+      {date:"Jun 20",teams:"Argentina vs Austria",city:"San Francisco 🇺🇸"},
+      {date:"Jun 21",teams:"Algeria vs Jordan",city:"Seattle 🇺🇸"},
+      {date:"Jun 24",teams:"Argentina vs Jordan",city:"Philadelphia 🇺🇸"},
+      {date:"Jun 24",teams:"Algeria vs Austria",city:"New York/NJ 🇺🇸"},
+    ]},
+  K: { name:"K", teams:[{f:"🇵🇹",n:"Portugal"},{f:"🇨🇩",n:"DR Congo"},{f:"🇺🇿",n:"Uzbekistan"},{f:"🇨🇴",n:"Colombia"}],
+    matches:[
+      {date:"Jun 17",teams:"Portugal vs Uzbekistan",city:"Monterrey 🇲🇽"},
+      {date:"Jun 17",teams:"DR Congo vs Colombia",city:"Mexico City 🇲🇽"},
+      {date:"Jun 21",teams:"Portugal vs DR Congo",city:"Los Angeles 🇺🇸"},
+      {date:"Jun 22",teams:"Colombia vs Uzbekistan",city:"Boston 🇺🇸"},
+      {date:"Jun 25",teams:"Portugal vs Colombia",city:"San Francisco 🇺🇸"},
+      {date:"Jun 25",teams:"DR Congo vs Uzbekistan",city:"Philadelphia 🇺🇸"},
+    ]},
+  L: { name:"L", teams:[{f:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",n:"England"},{f:"🇭🇷",n:"Croatia"},{f:"🇬🇭",n:"Ghana"},{f:"🇵🇦",n:"Panama"}],
+    matches:[
+      {date:"Jun 18",teams:"England vs Panama",city:"Guadalajara 🇲🇽"},
+      {date:"Jun 18",teams:"Croatia vs Ghana",city:"Monterrey 🇲🇽"},
+      {date:"Jun 22",teams:"England vs Croatia",city:"Dallas 🇺🇸"},
+      {date:"Jun 22",teams:"Ghana vs Panama",city:"Atlanta 🇺🇸"},
+      {date:"Jun 26",teams:"England vs Ghana",city:"Houston 🇺🇸"},
+      {date:"Jun 26",teams:"Croatia vs Panama",city:"Kansas City 🇺🇸"},
+    ]},
 };
 
 const ROUNDS = ["Round of 32","Round of 16","Quarter-Finals","Semi-Finals","Final"];
+
+// Knockout round schedules: date + city for each slot
+const KNOCKOUT_SCHEDULE = {
+  r32: [
+    {date:"Jun 28", city:"Los Angeles 🇺🇸"},
+    {date:"Jun 28", city:"Mexico City 🇲🇽"},
+    {date:"Jun 29", city:"Atlanta 🇺🇸"},
+    {date:"Jun 29", city:"Toronto 🇨🇦"},
+    {date:"Jun 30", city:"Miami 🇺🇸"},
+    {date:"Jun 30", city:"Houston 🇺🇸"},
+    {date:"Jul 1", city:"San Francisco 🇺🇸"},
+    {date:"Jul 1", city:"Seattle 🇺🇸"},
+    {date:"Jul 1", city:"New York/NJ 🇺🇸"},
+    {date:"Jul 2", city:"Los Angeles 🇺🇸"},
+    {date:"Jul 2", city:"Toronto 🇨🇦"},
+    {date:"Jul 2", city:"Vancouver 🇨🇦"},
+    {date:"Jul 3", city:"Dallas 🇺🇸"},
+    {date:"Jul 3", city:"Miami 🇺🇸"},
+    {date:"Jul 3", city:"Atlanta 🇺🇸"},
+    {date:"Jul 3", city:"Kansas City 🇺🇸"},
+  ],
+  r16: [
+    {date:"Jul 4", city:"Houston 🇺🇸"},
+    {date:"Jul 4", city:"Philadelphia 🇺🇸"},
+    {date:"Jul 5", city:"New York/NJ 🇺🇸"},
+    {date:"Jul 5", city:"Mexico City 🇲🇽"},
+    {date:"Jul 6", city:"Dallas 🇺🇸"},
+    {date:"Jul 6", city:"Seattle 🇺🇸"},
+    {date:"Jul 7", city:"Atlanta 🇺🇸"},
+    {date:"Jul 7", city:"Vancouver 🇨🇦"},
+  ],
+  qf: [
+    {date:"Jul 9", city:"Boston 🇺🇸"},
+    {date:"Jul 10", city:"Los Angeles 🇺🇸"},
+    {date:"Jul 11", city:"Miami 🇺🇸"},
+    {date:"Jul 11", city:"Kansas City 🇺🇸"},
+  ],
+  sf: [
+    {date:"Jul 14", city:"Dallas 🇺🇸"},
+    {date:"Jul 15", city:"Atlanta 🇺🇸"},
+  ],
+  final: {date:"Jul 19", city:"New York/NJ 🇺🇸 🏆"},
+};
 
 function emptyBracket() {
   // groups: {A: [1st,2nd], B:[1st,2nd], ...}
@@ -43,7 +183,7 @@ function emptyBracket() {
     champion: null,
     groups,
     knockout: {
-      r32: Array(16).fill(null),   // 16 matches
+      r32: Array(16).fill(null), // 16 matches
       r16: Array(8).fill(null),
       qf: Array(4).fill(null),
       sf: Array(2).fill(null),
@@ -113,20 +253,39 @@ function TeamBtn({ team, selected, onClick, size="md" }) {
 }
 
 function GroupCard({ groupKey, group, picks, onChange }) {
+  const [showSchedule, setShowSchedule] = useState(false);
   return (
     <div className="bg-white/10 backdrop-blur rounded-2xl p-4 border border-white/20">
-      <div className="flex items-center gap-2 mb-3">
-        <span className="bg-yellow-400 text-gray-900 font-black text-lg w-8 h-8 rounded-full flex items-center justify-center">
-          {groupKey}
-        </span>
-        <span className="text-white/60 text-sm">Pick 1st & 2nd place</span>
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <span className="bg-yellow-400 text-gray-900 font-black text-lg w-8 h-8 rounded-full flex items-center justify-center">
+            {groupKey}
+          </span>
+          <span className="text-white/60 text-sm">Pick 1st & 2nd place</span>
+        </div>
+        <button onClick={() => setShowSchedule(s => !s)}
+          className="text-xs text-blue-300 border border-blue-400/30 rounded-lg px-2 py-1 hover:bg-blue-400/10 transition-all">
+          {showSchedule ? "Hide" : "📅 Matches"}
+        </button>
       </div>
+
+      {showSchedule && group.matches && (
+        <div className="mb-3 space-y-1 bg-black/20 rounded-xl p-3">
+          {group.matches.map((m, i) => (
+            <div key={i} className="flex items-center gap-2 text-xs">
+              <span className="text-yellow-400 font-bold w-12 shrink-0">{m.date}</span>
+              <span className="text-white flex-1">{m.teams}</span>
+              <span className="text-white/40 shrink-0">{m.city}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="grid grid-cols-2 gap-2 mb-3">
         {group.teams.map(t => (
           <button
             key={t.n}
             onClick={() => {
-              // toggle picks
               let [p1, p2] = [...(picks||[null,null])];
               if (p1 === t.n) { onChange([null, p2]); }
               else if (p2 === t.n) { onChange([p1, null]); }
@@ -154,7 +313,7 @@ function GroupCard({ groupKey, group, picks, onChange }) {
   );
 }
 
-function KnockoutPick({ label, teamA, teamB, winner, onPick }) {
+function KnockoutPick({ label, teamA, teamB, winner, onPick, date, city }) {
   if (!teamA && !teamB) return (
     <div className="bg-white/5 rounded-xl p-3 border border-white/10 text-white/30 text-xs text-center">
       {label}<br/>Waiting for group picks…
@@ -162,7 +321,15 @@ function KnockoutPick({ label, teamA, teamB, winner, onPick }) {
   );
   return (
     <div className="bg-white/10 backdrop-blur rounded-xl p-3 border border-white/20">
-      <div className="text-white/50 text-xs mb-2 font-semibold uppercase tracking-wider">{label}</div>
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-white/50 text-xs font-semibold uppercase tracking-wider">{label}</div>
+        {date && (
+          <div className="flex items-center gap-2 text-xs">
+            <span className="text-yellow-400 font-bold">📅 {date}</span>
+            <span className="text-white/40">{city}</span>
+          </div>
+        )}
+      </div>
       <div className="flex flex-col gap-2">
         {[teamA, teamB].map((t, i) => t ? (
           <button key={i} onClick={() => onPick(t)}
@@ -327,7 +494,7 @@ export default function App() {
             <div className="text-center py-6">
               <div className="text-6xl mb-3">🌍⚽🏆</div>
               <h1 style={{fontFamily:"'Fredoka One',sans-serif"}} className="text-4xl text-white font-black mb-2">
-               Friends Bracket
+                Family Bracket
               </h1>
               <p className="text-white/60 text-lg">FIFA World Cup 2026</p>
               <p className="text-yellow-400 font-bold mt-1">June 11 – July 19 · USA/CAN/MEX</p>
@@ -368,7 +535,7 @@ export default function App() {
             )}
 
             <div className="bg-blue-500/20 border border-blue-400/30 rounded-2xl p-4">
-              <h3 className="text-blue-300 font-black mb-2">📱 Share with Family & Friends</h3>
+              <h3 className="text-blue-300 font-black mb-2">📱 Share with Family</h3>
               <p className="text-white/60 text-sm mb-3">Everyone fills their bracket on this same link. Share it via WhatsApp!</p>
               <button onClick={() => {
                   navigator.clipboard.writeText(window.location.href);
@@ -461,13 +628,15 @@ export default function App() {
 
                 {/* R32 */}
                 <div>
-                  <h3 className="text-yellow-400 font-bold mb-3">Round of 32</h3>
+                  <h3 className="text-yellow-400 font-bold mb-3">Round of 32 · Jun 28 – Jul 3</h3>
                   <div className="grid grid-cols-1 gap-2">
                     {r32Teams.map(([a,b], i) => (
                       <KnockoutPick key={i} label={`Match ${i+1}`}
                         teamA={a} teamB={b}
                         winner={currentBracket.knockout.r32[i]}
-                        onPick={t => pickKnockout("r32", i, t)} />
+                        onPick={t => pickKnockout("r32", i, t)}
+                        date={KNOCKOUT_SCHEDULE.r32[i].date}
+                        city={KNOCKOUT_SCHEDULE.r32[i].city} />
                     ))}
                   </div>
                 </div>
@@ -475,14 +644,16 @@ export default function App() {
                 {/* R16 */}
                 {currentBracket.knockout.r32.filter(Boolean).length >= 8 && (
                   <div>
-                    <h3 className="text-blue-300 font-bold mb-3">Round of 16</h3>
+                    <h3 className="text-blue-300 font-bold mb-3">Round of 16 · Jul 4 – 7</h3>
                     <div className="grid grid-cols-1 gap-2">
                       {Array.from({length:8},(_,i) => (
                         <KnockoutPick key={i} label={`R16 Match ${i+1}`}
                           teamA={currentBracket.knockout.r32[i*2]||null}
                           teamB={currentBracket.knockout.r32[i*2+1]||null}
                           winner={currentBracket.knockout.r16[i]}
-                          onPick={t => pickKnockout("r16", i, t)} />
+                          onPick={t => pickKnockout("r16", i, t)}
+                          date={KNOCKOUT_SCHEDULE.r16[i].date}
+                          city={KNOCKOUT_SCHEDULE.r16[i].city} />
                       ))}
                     </div>
                   </div>
@@ -491,14 +662,16 @@ export default function App() {
                 {/* QF */}
                 {currentBracket.knockout.r16.filter(Boolean).length >= 4 && (
                   <div>
-                    <h3 className="text-green-300 font-bold mb-3">⚡ Quarter-Finals</h3>
+                    <h3 className="text-green-300 font-bold mb-3">⚡ Quarter-Finals · Jul 9 – 11</h3>
                     <div className="grid grid-cols-1 gap-2">
                       {Array.from({length:4},(_,i) => (
                         <KnockoutPick key={i} label={`QF ${i+1}`}
                           teamA={currentBracket.knockout.r16[i*2]||null}
                           teamB={currentBracket.knockout.r16[i*2+1]||null}
                           winner={currentBracket.knockout.qf[i]}
-                          onPick={t => pickKnockout("qf", i, t)} />
+                          onPick={t => pickKnockout("qf", i, t)}
+                          date={KNOCKOUT_SCHEDULE.qf[i].date}
+                          city={KNOCKOUT_SCHEDULE.qf[i].city} />
                       ))}
                     </div>
                   </div>
@@ -507,14 +680,16 @@ export default function App() {
                 {/* SF */}
                 {currentBracket.knockout.qf.filter(Boolean).length >= 2 && (
                   <div>
-                    <h3 className="text-orange-300 font-bold mb-3">🌟 Semi-Finals</h3>
+                    <h3 className="text-orange-300 font-bold mb-3">🌟 Semi-Finals · Jul 14 – 15</h3>
                     <div className="grid grid-cols-1 gap-2">
                       {Array.from({length:2},(_,i) => (
-                        <KnockoutPick key={i} label={`SF ${i+1}`}
+                        <KnockoutPick key={i} label={`Semi-Final ${i+1}`}
                           teamA={currentBracket.knockout.qf[i*2]||null}
                           teamB={currentBracket.knockout.qf[i*2+1]||null}
                           winner={currentBracket.knockout.sf[i]}
-                          onPick={t => pickKnockout("sf", i, t)} />
+                          onPick={t => pickKnockout("sf", i, t)}
+                          date={KNOCKOUT_SCHEDULE.sf[i].date}
+                          city={KNOCKOUT_SCHEDULE.sf[i].city} />
                       ))}
                     </div>
                   </div>
@@ -523,12 +698,14 @@ export default function App() {
                 {/* Final */}
                 {currentBracket.knockout.sf.filter(Boolean).length === 2 && (
                   <div>
-                    <h3 className="text-yellow-400 font-black text-xl mb-3">🏆 THE FINAL</h3>
+                    <h3 className="text-yellow-400 font-black text-xl mb-3">🏆 THE FINAL · Jul 19</h3>
                     <KnockoutPick label="World Cup Final"
                       teamA={currentBracket.knockout.sf[0]}
                       teamB={currentBracket.knockout.sf[1]}
                       winner={currentBracket.champion}
-                      onPick={t => { pickKnockout("final", 0, t); setCurrentBracket(b=>({...b,champion:t})); }} />
+                      onPick={t => { pickKnockout("final", 0, t); setCurrentBracket(b=>({...b,champion:t})); }}
+                      date={KNOCKOUT_SCHEDULE.final.date}
+                      city={KNOCKOUT_SCHEDULE.final.city} />
                   </div>
                 )}
 
@@ -676,4 +853,3 @@ export default function App() {
     </div>
   );
 }
-
