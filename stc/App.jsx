@@ -15,7 +15,6 @@ const GROUPS = {
   K: ["Portugal","DR Congo","Uzbekistan","Colombia"],
   L: ["England","Croatia","Ghana","Panama"],
 };
-
 // Actual 2026 groups (simplified for fun)
 const REAL_GROUPS = {
   A: { name:"A", teams:[{f:"🇲🇽",n:"Mexico"},{f:"🇿🇦",n:"South Africa"},{f:"🇰🇷",n:"South Korea"},{f:"🇨🇿",n:"Czechia"}]},
