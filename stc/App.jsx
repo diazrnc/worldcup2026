@@ -1,21 +1,19 @@
-
 import { useState, useEffect, useCallback } from "react";
 
-// ── DATA
- ────────────────────────────────────────────────────────────────────
+// ── DATA ────────────────────────────────────────────────────────────────────
 const GROUPS = {
-  A: ["Mexico","South Africa","South Korea","Czech Republic"],
-  B: ["Canada","Bosnia-Herzegovina","Qatar","Switzerland"],
-  C: ["Brazil","Morroco","Haiti","Scotland"],
-  D: ["United States","Paraguay","Australia","Turkey"],
-  E: ["Germany","Curaçao","Ivory Coast","Ecuador"],
-  F: ["Neatherland","Japan","Swiden","Tunisia"],
-  G: ["Bwlgium","Egypt","Iran","New Zealand"],
-  H: ["Spain","Cape Verde","Daudi Arabia","Uruguay"],
-  I: ["France","Senegal","Iraq","Norway"],
-  J: ["Argentina","Algeria","Austria","Jordan"],
-  K: ["Portugal","DR Congo","Uzbekistan","Colombia"],
-  L: ["England","Croatia","Ghana","Panama"],
+  A: ["Mexico","South Africa","Ecuador","Czech Republic"],
+  B: ["USA","Panama","Morocco","Yemen"],
+  C: ["Argentina","Peru","Australia","Ukraine"],
+  D: ["Brazil","Chile","Cameroon","Slovenia"],
+  E: ["England","Senegal","Costa Rica","Algeria"],
+  F: ["France","Uruguay","Canada","Hungary"],
+  G: ["Spain","Belgium","Japan","Uzbekistan"],
+  H: ["Germany","Mexico (wait)","Colombia","Saudi Arabia"],
+  I: ["Portugal","Turkey","Paraguay","Ivory Coast"],
+  J: ["Netherlands","Egypt","Iraq","South Korea"],
+  K: ["Italy","Serbia","Nigeria","Iran"],
+  L: ["Croatia","Venezuela","Cuba","New Zealand"],
 };
 
 // Actual 2026 groups with match schedules
