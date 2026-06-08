@@ -658,11 +658,36 @@ export default function App() {
         {/* ── FILL BRACKET ── */}
         {view === "fill" && (
           <div className="space-y-5">
-            <div className="flex items-center gap-2">
-              {["name","groups","thirds","knockout","done"].map((s,i) => (
-                <div key={s} className={`flex-1 h-2 rounded-full transition-all
-                  ${["name","groups","thirds","knockout","done"].indexOf(step) >= i ? "bg-yellow-400" : "bg-white/20"}`}/>
-              ))}
+            {/* Progress bar */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-1">
+                {["name","groups","thirds","r32","r16","qf","sf","final"].map((s,i) => (
+                  <div key={s} className={`flex-1 h-2 rounded-full transition-all cursor-pointer
+                    ${["name","groups","thirds","r32","r16","qf","sf","final"].indexOf(step) >= i ? "bg-yellow-400" : "bg-white/20"}`}
+                    onClick={() => {
+                      const order = ["name","groups","thirds","r32","r16","qf","sf","final"];
+                      const curr = order.indexOf(step);
+                      if (i < curr) setStep(s);
+                    }}
+                  />
+                ))}
+              </div>
+              <div className="flex items-center justify-between">
+                <button onClick={() => {
+                  const order = ["name","groups","thirds","r32","r16","qf","sf","final"];
+                  const curr = order.indexOf(step);
+                  if (curr > 0) setStep(order[curr - 1]);
+                }}
+                  className={`flex items-center gap-1 text-sm font-bold transition-all
+                    ${["name"].includes(step) ? "text-white/20 cursor-not-allowed" : "text-white/60 hover:text-white"}`}
+                  disabled={step === "name"}>
+                  ← Back
+                </button>
+                <span className="text-white/40 text-xs capitalize">
+                  {step === "r32" ? "Round of 32" : step === "r16" ? "Round of 16" : step === "qf" ? "Quarter-Finals" : step === "sf" ? "Semi-Finals" : step === "final" ? "The Final" : step}
+                </span>
+                <div className="w-12"/>
+              </div>
             </div>
 
             {step === "name" && (
@@ -764,108 +789,163 @@ export default function App() {
                 </div>
                 <button
                   disabled={currentBracket.thirdPicks.length !== 8}
-                  onClick={() => setStep("knockout")}
+                  onClick={() => setStep("r32")}
                   className="w-full bg-yellow-400 disabled:bg-white/20 disabled:text-white/30 text-gray-900 font-black text-xl rounded-2xl py-4 transition-all active:scale-95 sticky bottom-4">
-                  {currentBracket.thirdPicks.length === 8 ? "Next: Knockout Rounds →" : `Pick ${8 - currentBracket.thirdPicks.length} more teams`}
+                  {currentBracket.thirdPicks.length === 8 ? "Next: Round of 32 →" : `Pick ${8 - currentBracket.thirdPicks.length} more teams`}
                 </button>
               </div>
             )}
 
-            {step === "knockout" && (
-              <div className="space-y-5">
-                <h2 className="text-white text-xl font-black">🔥 Knockout Rounds</h2>
-
-                <div>
-                  <h3 className="text-yellow-400 font-bold mb-3">Round of 32 · Jun 28 – Jul 3</h3>
-                  <div className="grid grid-cols-1 gap-2">
-                    {r32Teams.map(([a,b], i) => (
-                      <KnockoutPick key={i} label={`Match ${i+1}`}
-                        teamA={a} teamB={b}
-                        winner={currentBracket.knockout.r32[i]}
-                        onPick={t => pickKnockout("r32", i, t)}
-                        date={KNOCKOUT_SCHEDULE.r32[i].date}
-                        city={KNOCKOUT_SCHEDULE.r32[i].city}/>
-                    ))}
-                  </div>
+            {/* ── ROUND OF 32 ── */}
+            {step === "r32" && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-white text-xl font-black">Round of 32</h2>
+                  <span className="text-white/40 text-xs">Jun 28 – Jul 3</span>
                 </div>
+                <p className="text-white/50 text-sm">Pick the winner of each match</p>
+                <div className="grid grid-cols-1 gap-2">
+                  {r32Teams.map(([a,b], i) => (
+                    <KnockoutPick key={i} label={`Match ${i+1}`}
+                      teamA={a} teamB={b}
+                      winner={currentBracket.knockout.r32[i]}
+                      onPick={t => pickKnockout("r32", i, t)}
+                      date={KNOCKOUT_SCHEDULE.r32[i].date}
+                      city={KNOCKOUT_SCHEDULE.r32[i].city}/>
+                  ))}
+                </div>
+                <button
+                  disabled={currentBracket.knockout.r32.filter(Boolean).length < 16}
+                  onClick={() => setStep("r16")}
+                  className="w-full bg-yellow-400 disabled:bg-white/20 disabled:text-white/30 text-gray-900 font-black text-xl rounded-2xl py-4 transition-all active:scale-95 sticky bottom-4">
+                  {currentBracket.knockout.r32.filter(Boolean).length < 16
+                    ? `Pick all 16 winners (${currentBracket.knockout.r32.filter(Boolean).length}/16)`
+                    : "Next: Round of 16 →"}
+                </button>
+              </div>
+            )}
 
-                {currentBracket.knockout.r32.filter(Boolean).length >= 8 && (
-                  <div>
-                    <h3 className="text-blue-300 font-bold mb-3">Round of 16 · Jul 4 – 7</h3>
-                    <div className="grid grid-cols-1 gap-2">
-                      {Array.from({length:8},(_,i) => (
-                        <KnockoutPick key={i} label={`R16 Match ${i+1}`}
-                          teamA={currentBracket.knockout.r32[i*2]||null}
-                          teamB={currentBracket.knockout.r32[i*2+1]||null}
-                          winner={currentBracket.knockout.r16[i]}
-                          onPick={t => pickKnockout("r16", i, t)}
-                          date={KNOCKOUT_SCHEDULE.r16[i].date}
-                          city={KNOCKOUT_SCHEDULE.r16[i].city}/>
-                      ))}
-                    </div>
-                  </div>
-                )}
+            {/* ── ROUND OF 16 ── */}
+            {step === "r16" && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-white text-xl font-black">Round of 16</h2>
+                  <span className="text-white/40 text-xs">Jul 4 – 7</span>
+                </div>
+                <p className="text-white/50 text-sm">Pick the winner of each match</p>
+                <div className="grid grid-cols-1 gap-2">
+                  {Array.from({length:8},(_,i) => (
+                    <KnockoutPick key={i} label={`Match ${i+1}`}
+                      teamA={currentBracket.knockout.r32[i*2]||null}
+                      teamB={currentBracket.knockout.r32[i*2+1]||null}
+                      winner={currentBracket.knockout.r16[i]}
+                      onPick={t => pickKnockout("r16", i, t)}
+                      date={KNOCKOUT_SCHEDULE.r16[i].date}
+                      city={KNOCKOUT_SCHEDULE.r16[i].city}/>
+                  ))}
+                </div>
+                <button
+                  disabled={currentBracket.knockout.r16.filter(Boolean).length < 8}
+                  onClick={() => setStep("qf")}
+                  className="w-full bg-yellow-400 disabled:bg-white/20 disabled:text-white/30 text-gray-900 font-black text-xl rounded-2xl py-4 transition-all active:scale-95 sticky bottom-4">
+                  {currentBracket.knockout.r16.filter(Boolean).length < 8
+                    ? `Pick all 8 winners (${currentBracket.knockout.r16.filter(Boolean).length}/8)`
+                    : "Next: Quarter-Finals →"}
+                </button>
+              </div>
+            )}
 
-                {currentBracket.knockout.r16.filter(Boolean).length >= 4 && (
-                  <div>
-                    <h3 className="text-green-300 font-bold mb-3">⚡ Quarter-Finals · Jul 9 – 11</h3>
-                    <div className="grid grid-cols-1 gap-2">
-                      {Array.from({length:4},(_,i) => (
-                        <KnockoutPick key={i} label={`QF ${i+1}`}
-                          teamA={currentBracket.knockout.r16[i*2]||null}
-                          teamB={currentBracket.knockout.r16[i*2+1]||null}
-                          winner={currentBracket.knockout.qf[i]}
-                          onPick={t => pickKnockout("qf", i, t)}
-                          date={KNOCKOUT_SCHEDULE.qf[i].date}
-                          city={KNOCKOUT_SCHEDULE.qf[i].city}/>
-                      ))}
-                    </div>
-                  </div>
-                )}
+            {/* ── QUARTER-FINALS ── */}
+            {step === "qf" && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-white text-xl font-black">Quarter-Finals</h2>
+                  <span className="text-white/40 text-xs">Jul 9 – 11</span>
+                </div>
+                <p className="text-white/50 text-sm">Pick the winner of each match</p>
+                <div className="grid grid-cols-1 gap-2">
+                  {Array.from({length:4},(_,i) => (
+                    <KnockoutPick key={i} label={`QF Match ${i+1}`}
+                      teamA={currentBracket.knockout.r16[i*2]||null}
+                      teamB={currentBracket.knockout.r16[i*2+1]||null}
+                      winner={currentBracket.knockout.qf[i]}
+                      onPick={t => pickKnockout("qf", i, t)}
+                      date={KNOCKOUT_SCHEDULE.qf[i].date}
+                      city={KNOCKOUT_SCHEDULE.qf[i].city}/>
+                  ))}
+                </div>
+                <button
+                  disabled={currentBracket.knockout.qf.filter(Boolean).length < 4}
+                  onClick={() => setStep("sf")}
+                  className="w-full bg-yellow-400 disabled:bg-white/20 disabled:text-white/30 text-gray-900 font-black text-xl rounded-2xl py-4 transition-all active:scale-95 sticky bottom-4">
+                  {currentBracket.knockout.qf.filter(Boolean).length < 4
+                    ? `Pick all 4 winners (${currentBracket.knockout.qf.filter(Boolean).length}/4)`
+                    : "Next: Semi-Finals →"}
+                </button>
+              </div>
+            )}
 
-                {currentBracket.knockout.qf.filter(Boolean).length >= 2 && (
-                  <div>
-                    <h3 className="text-orange-300 font-bold mb-3">🌟 Semi-Finals · Jul 14 – 15</h3>
-                    <div className="grid grid-cols-1 gap-2">
-                      {Array.from({length:2},(_,i) => (
-                        <KnockoutPick key={i} label={`Semi-Final ${i+1}`}
-                          teamA={currentBracket.knockout.qf[i*2]||null}
-                          teamB={currentBracket.knockout.qf[i*2+1]||null}
-                          winner={currentBracket.knockout.sf[i]}
-                          onPick={t => pickKnockout("sf", i, t)}
-                          date={KNOCKOUT_SCHEDULE.sf[i].date}
-                          city={KNOCKOUT_SCHEDULE.sf[i].city}/>
-                      ))}
-                    </div>
-                  </div>
-                )}
+            {/* ── SEMI-FINALS ── */}
+            {step === "sf" && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-white text-xl font-black">Semi-Finals</h2>
+                  <span className="text-white/40 text-xs">Jul 14 – 15</span>
+                </div>
+                <p className="text-white/50 text-sm">Pick the 2 finalists</p>
+                <div className="grid grid-cols-1 gap-2">
+                  {Array.from({length:2},(_,i) => (
+                    <KnockoutPick key={i} label={`Semi-Final ${i+1}`}
+                      teamA={currentBracket.knockout.qf[i*2]||null}
+                      teamB={currentBracket.knockout.qf[i*2+1]||null}
+                      winner={currentBracket.knockout.sf[i]}
+                      onPick={t => pickKnockout("sf", i, t)}
+                      date={KNOCKOUT_SCHEDULE.sf[i].date}
+                      city={KNOCKOUT_SCHEDULE.sf[i].city}/>
+                  ))}
+                </div>
+                <button
+                  disabled={currentBracket.knockout.sf.filter(Boolean).length < 2}
+                  onClick={() => setStep("final")}
+                  className="w-full bg-yellow-400 disabled:bg-white/20 disabled:text-white/30 text-gray-900 font-black text-xl rounded-2xl py-4 transition-all active:scale-95 sticky bottom-4">
+                  {currentBracket.knockout.sf.filter(Boolean).length < 2
+                    ? `Pick both finalists (${currentBracket.knockout.sf.filter(Boolean).length}/2)`
+                    : "Next: The Final →"}
+                </button>
+              </div>
+            )}
 
-                {currentBracket.knockout.sf.filter(Boolean).length === 2 && (
-                  <div>
-                    <h3 className="text-yellow-400 font-black text-xl mb-3">🏆 THE FINAL · Jul 19</h3>
-                    <KnockoutPick label="World Cup Final"
-                      teamA={currentBracket.knockout.sf[0]}
-                      teamB={currentBracket.knockout.sf[1]}
-                      winner={currentBracket.champion}
-                      onPick={t => { pickKnockout("final", 0, t); setCurrentBracket(b=>({...b,champion:t})); }}
-                      date={KNOCKOUT_SCHEDULE.final.date}
-                      city={KNOCKOUT_SCHEDULE.final.city}/>
-                  </div>
-                )}
+            {/* ── THE FINAL ── */}
+            {step === "final" && (
+              <div className="space-y-4">
+                <div className="text-center">
+                  <div className="text-5xl mb-2">🏆</div>
+                  <h2 className="text-white text-2xl font-black">The Final</h2>
+                  <p className="text-white/50 text-sm">Jul 19 · MetLife Stadium, New York/NJ</p>
+                </div>
+                <KnockoutPick label="World Cup Final"
+                  teamA={currentBracket.knockout.sf[0]||null}
+                  teamB={currentBracket.knockout.sf[1]||null}
+                  winner={currentBracket.champion}
+                  onPick={t => { pickKnockout("final", 0, t); setCurrentBracket(b=>({...b,champion:t})); }}
+                  date={KNOCKOUT_SCHEDULE.final.date}
+                  city={KNOCKOUT_SCHEDULE.final.city}/>
 
                 {currentBracket.champion && (
-                  <div className="bg-yellow-400/20 border-2 border-yellow-400 rounded-2xl p-4 text-center">
-                    <div className="text-4xl mb-2">🏆</div>
-                    <div className="text-yellow-400 font-black text-xl">{currentBracket.name}'s Champion</div>
-                    <div className="text-white font-black text-2xl mt-1">
+                  <div className="bg-yellow-400/20 border-2 border-yellow-400 rounded-2xl p-5 text-center space-y-2">
+                    <div className="text-4xl">🏆</div>
+                    <div className="text-yellow-400 font-black text-lg">{currentBracket.name}'s World Champion</div>
+                    <div className="text-white font-black text-3xl">
                       {Object.values(REAL_GROUPS).flatMap(g=>g.teams).find(t=>t.n===currentBracket.champion)?.f} {currentBracket.champion}
                     </div>
                   </div>
                 )}
 
-                <button onClick={saveCurrentBracket}
-                  className="w-full bg-green-500 hover:bg-green-400 text-white font-black text-xl rounded-2xl py-4 transition-all active:scale-95">
-                  💾 Save My Bracket!
+                <button
+                  disabled={!currentBracket.champion}
+                  onClick={saveCurrentBracket}
+                  className="w-full bg-green-500 disabled:bg-white/20 disabled:text-white/30 hover:bg-green-400 text-white font-black text-xl rounded-2xl py-4 transition-all active:scale-95">
+                  {currentBracket.champion ? "💾 Save My Bracket!" : "Pick the Champion first"}
                 </button>
               </div>
             )}
