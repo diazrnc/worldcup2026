@@ -18,160 +18,199 @@ const GROUPS = {
 
 // Actual 2026 groups with match schedules
 const REAL_GROUPS = {
-  A: { name:"A", teams:[{f:"🇲🇽",n:"Mexico"},{f:"🇿🇦",n:"South Africa"},{f:"🇰🇷",n:"South Korea"},{f:"🇨🇿",n:"Czechia"}],
+
+  A: { name:"A", teams:[
+      {f:"🇲🇽",n:"Mexico"},{f:"🇿🇦",n:"South Africa"},{f:"🇰🇷",n:"South Korea"},{f:"🇨🇿",n:"Czechia"}],
     matches:[
-      {date:"Jun 11",teams:"Mexico vs South Africa",city:"Mexico City 🇲🇽"},
-      {date:"Jun 11",teams:"South Korea vs Czechia",city:"Guadalajara 🇲🇽"},
-      {date:"Jun 15",teams:"Mexico vs South Korea",city:"Dallas 🇺🇸"},
-      {date:"Jun 15",teams:"South Africa vs Czechia",city:"Atlanta 🇺🇸"},
-      {date:"Jun 19",teams:"Mexico vs Czechia",city:"Houston 🇺🇸"},
-      {date:"Jun 19",teams:"South Africa vs South Korea",city:"Kansas City 🇺🇸"},
+      {date:"Jun 11 | 15:00",teams:"Mexico vs South Africa",city:"Mexico City 🇲🇽"},
+      {date:"Jun 11 | 22:00",teams:"South Korea vs Czechia",city:"Guadalajara 🇲🇽"},
+      {date:"Jun 18 | 12:00",teams:"Czechia vs South Africa",city:"Atlanta 🇺🇸"},
+      {date:"Jun 18 | 21:00",teams:"Mexico vs South Korea",city:"Guadalajara 🇲🇽"},
+      {date:"Jun 24 | 21:00",teams:"Mexico vs Czechia",city:"Mexico City 🇲🇽"},
+      {date:"Jun 24 | 21:00",teams:"South Africa vs South Korea",city:"Monterrey 🇲🇽"},
     ]},
-  B: { name:"B", teams:[{f:"🇨🇦",n:"Canada"},{f:"🇧🇦",n:"Bosnia-Herzegovina"},{f:"🇶🇦",n:"Qatar"},{f:"🇨🇭",n:"Switzerland"}],
+
+  B: { name:"B", teams:[
+      {f:"🇨🇦",n:"Canada"},{f:"🇧🇦",n:"Bosnia and Herzegovina"},{f:"🇶🇦",n:"Qatar"},{f:"🇨🇭",n:"Switzerland"}],
     matches:[
-      {date:"Jun 12",teams:"Canada vs Bosnia-Herzegovina",city:"Toronto 🇨🇦"},
-      {date:"Jun 13",teams:"Qatar vs Switzerland",city:"Dallas 🇺🇸"},
-      {date:"Jun 16",teams:"Canada vs Qatar",city:"Vancouver 🇨🇦"},
-      {date:"Jun 17",teams:"Switzerland vs Bosnia-Herzegovina",city:"Seattle 🇺🇸"},
-      {date:"Jun 21",teams:"Canada vs Switzerland",city:"Vancouver 🇨🇦"},
-      {date:"Jun 21",teams:"Bosnia-Herzegovina vs Qatar",city:"Philadelphia 🇺🇸"},
+      {date:"Jun 12 | 15:00",teams:"Canada vs Bosnia and Herzegovina",city:"Toronto 🇨🇦"},
+      {date:"Jun 13 | 15:00",teams:"Qatar vs Switzerland",city:"San Francisco 🇺🇸"},
+      {date:"Jun 18 | 18:00",teams:"Canada vs Qatar",city:"Vancouver 🇨🇦"},
+      {date:"Jun 18 | 15:00",teams:"Switzerland vs Bosnia and Herzegovina",city:"Los Angeles 🇺🇸"},
+      {date:"Jun 24 | 15:00",teams:"Canada vs Switzerland",city:"Vancouver 🇨🇦"},
+      {date:"Jun 24 | 15:00",teams:"Bosnia and Herzegovina vs Qatar",city:"Seattle 🇺🇸"},
     ]},
-  C: { name:"C", teams:[{f:"🇧🇷",n:"Brazil"},{f:"🇲🇦",n:"Morocco"},{f:"🇭🇹",n:"Haiti"},{f:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",n:"Scotland"}],
+
+  C: { name:"C", teams:[
+      {f:"🇧🇷",n:"Brazil"},{f:"🇲🇦",n:"Morocco"},{f:"🇭🇹",n:"Haiti"},{f:"🏴",n:"Scotland"}],
     matches:[
-      {date:"Jun 13",teams:"Brazil vs Morocco",city:"New York/NJ 🇺🇸"},
-      {date:"Jun 13",teams:"Haiti vs Scotland",city:"Boston 🇺🇸"},
-      {date:"Jun 17",teams:"Brazil vs Haiti",city:"San Francisco 🇺🇸"},
-      {date:"Jun 17",teams:"Morocco vs Scotland",city:"Miami 🇺🇸"},
-      {date:"Jun 21",teams:"Brazil vs Scotland",city:"Atlanta 🇺🇸"},
-      {date:"Jun 21",teams:"Morocco vs Haiti",city:"Los Angeles 🇺🇸"},
+      {date:"Jun 13 | 18:00",teams:"Brazil vs Morocco",city:"New York/NJ 🇺🇸"},
+      {date:"Jun 13 | 21:00",teams:"Haiti vs Scotland",city:"Boston 🇺🇸"},
+      {date:"Jun 19 | 18:00",teams:"Scotland vs Morocco",city:"Boston 🇺🇸"},
+      {date:"Jun 19 | 21:00",teams:"Brazil vs Haiti",city:"Philadelphia 🇺🇸"},
+      {date:"Jun 24 | 18:00",teams:"Scotland vs Brazil",city:"Miami 🇺🇸"},
+      {date:"Jun 24 | 18:00",teams:"Morocco vs Haiti",city:"Atlanta 🇺🇸"},
     ]},
-  D: { name:"D", teams:[{f:"🇺🇸",n:"USA"},{f:"🇵🇾",n:"Paraguay"},{f:"🇦🇺",n:"Australia"},{f:"🇹🇷",n:"Turkey"}],
+
+  D: { name:"D", teams:[
+      {f:"🇺🇸",n:"USA"},{f:"🇵🇾",n:"Paraguay"},{f:"🇦🇺",n:"Australia"},{f:"🇹🇷",n:"Turkey"}],
     matches:[
-      {date:"Jun 12",teams:"USA vs Paraguay",city:"Los Angeles 🇺🇸"},
-      {date:"Jun 13",teams:"Australia vs Turkey",city:"Vancouver 🇨🇦"},
-      {date:"Jun 17",teams:"USA vs Australia",city:"New York/NJ 🇺🇸"},
-      {date:"Jun 17",teams:"Turkey vs Paraguay",city:"Houston 🇺🇸"},
-      {date:"Jun 21",teams:"USA vs Turkey",city:"Seattle 🇺🇸"},
-      {date:"Jun 21",teams:"Australia vs Paraguay",city:"Kansas City 🇺🇸"},
+      {date:"Jun 12 | 21:00",teams:"USA vs Paraguay",city:"Los Angeles 🇺🇸"},
+      {date:"Jun 14 | 00:00",teams:"Australia vs Turkey",city:"Vancouver 🇨🇦"},
+      {date:"Jun 19 | 15:00",teams:"USA vs Australia",city:"Seattle 🇺🇸"},
+      {date:"Jun 20 | 00:00",teams:"Turkey vs Paraguay",city:"San Francisco 🇺🇸"},
+      {date:"Jun 25 | 22:00",teams:"Turkey vs USA",city:"Los Angeles 🇺🇸"},
+      {date:"Jun 25 | 22:00",teams:"Paraguay vs Australia",city:"San Francisco 🇺🇸"},
     ]},
-  E: { name:"E", teams:[{f:"🇩🇪",n:"Germany"},{f:"🇨🇼",n:"Curaçao"},{f:"🇨🇮",n:"Ivory Coast"},{f:"🇪🇨",n:"Ecuador"}],
+
+  E: { name:"E", teams:[
+      {f:"🇩🇪",n:"Germany"},{f:"🇨🇼",n:"Curaçao"},{f:"🇨🇮",n:"Ivory Coast"},{f:"🇪🇨",n:"Ecuador"}],
     matches:[
-      {date:"Jun 14",teams:"Germany vs Curaçao",city:"Philadelphia 🇺🇸"},
-      {date:"Jun 14",teams:"Ivory Coast vs Ecuador",city:"Boston 🇺🇸"},
-      {date:"Jun 18",teams:"Germany vs Ivory Coast",city:"Dallas 🇺🇸"},
-      {date:"Jun 18",teams:"Ecuador vs Curaçao",city:"Miami 🇺🇸"},
-      {date:"Jun 22",teams:"Germany vs Ecuador",city:"Los Angeles 🇺🇸"},
-      {date:"Jun 22",teams:"Ivory Coast vs Curaçao",city:"Atlanta 🇺🇸"},
+      {date:"Jun 14 | 13:00",teams:"Germany vs Curaçao",city:"Houston 🇺🇸"},
+      {date:"Jun 14 | 19:00",teams:"Ivory Coast vs Ecuador",city:"Philadelphia 🇺🇸"},
+      {date:"Jun 20 | 16:00",teams:"Germany vs Ivory Coast",city:"Toronto 🇨🇦"},
+      {date:"Jun 20 | 22:00",teams:"Ecuador vs Curaçao",city:"Kansas City 🇺🇸"},
+      {date:"Jun 25 | 16:00",teams:"Curaçao vs Ivory Coast",city:"Philadelphia 🇺🇸"},
+      {date:"Jun 25 | 16:00",teams:"Ecuador vs Germany",city:"New York/NJ 🇺🇸"},
     ]},
-  F: { name:"F", teams:[{f:"🇳🇱",n:"Netherlands"},{f:"🇯🇵",n:"Japan"},{f:"🇸🇪",n:"Sweden"},{f:"🇹🇳",n:"Tunisia"}],
+
+  F: { name:"F", teams:[
+      {f:"🇳🇱",n:"Netherlands"},{f:"🇯🇵",n:"Japan"},{f:"🇸🇪",n:"Sweden"},{f:"🇹🇳",n:"Tunisia"}],
     matches:[
-      {date:"Jun 14",teams:"Netherlands vs Tunisia",city:"Kansas City 🇺🇸"},
-      {date:"Jun 14",teams:"Japan vs Sweden",city:"Houston 🇺🇸"},
-      {date:"Jun 18",teams:"Netherlands vs Japan",city:"San Francisco 🇺🇸"},
-      {date:"Jun 19",teams:"Sweden vs Tunisia",city:"Seattle 🇺🇸"},
-      {date:"Jun 22",teams:"Netherlands vs Sweden",city:"Miami 🇺🇸"},
-      {date:"Jun 22",teams:"Japan vs Tunisia",city:"New York/NJ 🇺🇸"},
+      {date:"Jun 14 | 16:00",teams:"Netherlands vs Japan",city:"Dallas 🇺🇸"},
+      {date:"Jun 14 | 22:00",teams:"Sweden vs Tunisia",city:"Monterrey 🇲🇽"},
+      {date:"Jun 20 | 13:00",teams:"Netherlands vs Sweden",city:"Houston 🇺🇸"},
+      {date:"Jun 21 | 00:00",teams:"Tunisia vs Japan",city:"Monterrey 🇲🇽"},
+      {date:"Jun 25 | 19:00",teams:"Japan vs Sweden",city:"Dallas 🇺🇸"},
+      {date:"Jun 25 | 19:00",teams:"Tunisia vs Netherlands",city:"Kansas City 🇺🇸"},
     ]},
-  G: { name:"G", teams:[{f:"🇧🇪",n:"Belgium"},{f:"🇪🇬",n:"Egypt"},{f:"🇮🇷",n:"Iran"},{f:"🇳🇿",n:"New Zealand"}],
+
+  G: { name:"G", teams:[
+      {f:"🇧🇪",n:"Belgium"},{f:"🇪🇬",n:"Egypt"},{f:"🇮🇷",n:"Iran"},{f:"🇳🇿",n:"New Zealand"}],
     matches:[
-      {date:"Jun 15",teams:"Belgium vs Egypt",city:"Monterrey 🇲🇽"},
-      {date:"Jun 15",teams:"Iran vs New Zealand",city:"Guadalajara 🇲🇽"},
-      {date:"Jun 19",teams:"Belgium vs Iran",city:"Boston 🇺🇸"},
-      {date:"Jun 19",teams:"Egypt vs New Zealand",city:"Philadelphia 🇺🇸"},
-      {date:"Jun 23",teams:"Belgium vs New Zealand",city:"Seattle 🇺🇸"},
-      {date:"Jun 23",teams:"Egypt vs Iran",city:"Dallas 🇺🇸"},
+      {date:"Jun 15 | 15:00",teams:"Belgium vs Egypt",city:"Seattle 🇺🇸"},
+      {date:"Jun 15 | 21:00",teams:"Iran vs New Zealand",city:"Los Angeles 🇺🇸"},
+      {date:"Jun 21 | 15:00",teams:"Belgium vs Iran",city:"Los Angeles 🇺🇸"},
+      {date:"Jun 21 | 21:00",teams:"New Zealand vs Egypt",city:"Vancouver 🇨🇦"},
+      {date:"Jun 26 | 23:00",teams:"Egypt vs Iran",city:"Seattle 🇺🇸"},
+      {date:"Jun 26 | 23:00",teams:"New Zealand vs Belgium",city:"Vancouver 🇨🇦"},
     ]},
-  H: { name:"H", teams:[{f:"🇪🇸",n:"Spain"},{f:"🇨🇻",n:"Cape Verde"},{f:"🇸🇦",n:"Saudi Arabia"},{f:"🇺🇾",n:"Uruguay"}],
+
+  H: { name:"H", teams:[
+      {f:"🇪🇸",n:"Spain"},{f:"🇨🇻",n:"Cape Verde"},{f:"🇸🇦",n:"Saudi Arabia"},{f:"🇺🇾",n:"Uruguay"}],
     matches:[
-      {date:"Jun 15",teams:"Spain vs Uruguay",city:"Kansas City 🇺🇸"},
-      {date:"Jun 15",teams:"Cape Verde vs Saudi Arabia",city:"Atlanta 🇺🇸"},
-      {date:"Jun 19",teams:"Spain vs Cape Verde",city:"Houston 🇺🇸"},
-      {date:"Jun 20",teams:"Uruguay vs Saudi Arabia",city:"Los Angeles 🇺🇸"},
-      {date:"Jun 23",teams:"Spain vs Saudi Arabia",city:"Miami 🇺🇸"},
-      {date:"Jun 23",teams:"Cape Verde vs Uruguay",city:"San Francisco 🇺🇸"},
+      {date:"Jun 15 | 12:00",teams:"Spain vs Cape Verde",city:"Atlanta 🇺🇸"},
+      {date:"Jun 15 | 18:00",teams:"Saudi Arabia vs Uruguay",city:"Miami 🇺🇸"},
+      {date:"Jun 21 | 12:00",teams:"Spain vs Saudi Arabia",city:"Atlanta 🇺🇸"},
+      {date:"Jun 21 | 15:00",teams:"Uruguay vs Cape Verde",city:"Miami 🇺🇸"},
+      {date:"Jun 26 | 20:00",teams:"Cape Verde vs Saudi Arabia",city:"Houston 🇺🇸"},
+      {date:"Jun 26 | 20:00",teams:"Uruguay vs Spain",city:"Guadalajara 🇲🇽"},
     ]},
-  I: { name:"I", teams:[{f:"🇫🇷",n:"France"},{f:"🇸🇳",n:"Senegal"},{f:"🇮🇶",n:"Iraq"},{f:"🇳🇴",n:"Norway"}],
+
+  I: { name:"I", teams:[
+      {f:"🇫🇷",n:"France"},{f:"🇸🇳",n:"Senegal"},{f:"🇮🇶",n:"Iraq"},{f:"🇳🇴",n:"Norway"}],
     matches:[
-      {date:"Jun 16",teams:"France vs Senegal",city:"New York/NJ 🇺🇸"},
-      {date:"Jun 16",teams:"Iraq vs Norway",city:"Los Angeles 🇺🇸"},
-      {date:"Jun 20",teams:"France vs Iraq",city:"Atlanta 🇺🇸"},
-      {date:"Jun 20",teams:"Norway vs Senegal",city:"Kansas City 🇺🇸"},
-      {date:"Jun 24",teams:"France vs Norway",city:"Dallas 🇺🇸"},
-      {date:"Jun 24",teams:"Senegal vs Iraq",city:"Houston 🇺🇸"},
+      {date:"Jun 16 | 15:00",teams:"France vs Senegal",city:"New York/NJ 🇺🇸"},
+      {date:"Jun 16 | 18:00",teams:"Iraq vs Norway",city:"Boston 🇺🇸"},
+      {date:"Jun 22 | 17:00",teams:"France vs Iraq",city:"Philadelphia 🇺🇸"},
+      {date:"Jun 22 | 20:00",teams:"Norway vs Senegal",city:"New York/NJ 🇺🇸"},
+      {date:"Jun 26 | 15:00",teams:"Norway vs France",city:"Boston 🇺🇸"},
+      {date:"Jun 26 | 15:00",teams:"Senegal vs Iraq",city:"Toronto 🇨🇦"},
     ]},
-  J: { name:"J", teams:[{f:"🇦🇷",n:"Argentina"},{f:"🇩🇿",n:"Algeria"},{f:"🇦🇹",n:"Austria"},{f:"🇯🇴",n:"Jordan"}],
+
+  J: { name:"J", teams:[
+      {f:"🇦🇷",n:"Argentina"},{f:"🇩🇿",n:"Algeria"},{f:"🇦🇹",n:"Austria"},{f:"🇯🇴",n:"Jordan"}],
     matches:[
-      {date:"Jun 16",teams:"Argentina vs Algeria",city:"Miami 🇺🇸"},
-      {date:"Jun 17",teams:"Austria vs Jordan",city:"Boston 🇺🇸"},
-      {date:"Jun 20",teams:"Argentina vs Austria",city:"San Francisco 🇺🇸"},
-      {date:"Jun 21",teams:"Algeria vs Jordan",city:"Seattle 🇺🇸"},
-      {date:"Jun 24",teams:"Argentina vs Jordan",city:"Philadelphia 🇺🇸"},
-      {date:"Jun 24",teams:"Algeria vs Austria",city:"New York/NJ 🇺🇸"},
+      {date:"Jun 16 | 21:00",teams:"Argentina vs Algeria",city:"Kansas City 🇺🇸"},
+      {date:"Jun 17 | 00:00",teams:"Austria vs Jordan",city:"San Francisco 🇺🇸"},
+      {date:"Jun 22 | 13:00",teams:"Argentina vs Austria",city:"Dallas 🇺🇸"},
+      {date:"Jun 22 | 23:00",teams:"Jordan vs Algeria",city:"San Francisco 🇺🇸"},
+      {date:"Jun 27 | 22:00",teams:"Algeria vs Austria",city:"Kansas City 🇺🇸"},
+      {date:"Jun 27 | 22:00",teams:"Jordan vs Argentina",city:"Dallas 🇺🇸"},
     ]},
-  K: { name:"K", teams:[{f:"🇵🇹",n:"Portugal"},{f:"🇨🇩",n:"DR Congo"},{f:"🇺🇿",n:"Uzbekistan"},{f:"🇨🇴",n:"Colombia"}],
+
+  K: { name:"K", teams:[
+      {f:"🇵🇹",n:"Portugal"},{f:"🇨🇩",n:"DR Congo"},{f:"🇺🇿",n:"Uzbekistan"},{f:"🇨🇴",n:"Colombia"}],
     matches:[
-      {date:"Jun 17",teams:"Portugal vs Uzbekistan",city:"Monterrey 🇲🇽"},
-      {date:"Jun 17",teams:"DR Congo vs Colombia",city:"Mexico City 🇲🇽"},
-      {date:"Jun 21",teams:"Portugal vs DR Congo",city:"Los Angeles 🇺🇸"},
-      {date:"Jun 22",teams:"Colombia vs Uzbekistan",city:"Boston 🇺🇸"},
-      {date:"Jun 25",teams:"Portugal vs Colombia",city:"San Francisco 🇺🇸"},
-      {date:"Jun 25",teams:"DR Congo vs Uzbekistan",city:"Philadelphia 🇺🇸"},
+      {date:"Jun 17 | 13:00",teams:"Portugal vs DR Congo",city:"Houston 🇺🇸"},
+      {date:"Jun 17 | 22:00",teams:"Uzbekistan vs Colombia",city:"Mexico City 🇲🇽"},
+      {date:"Jun 23 | 13:00",teams:"Portugal vs Uzbekistan",city:"Houston 🇺🇸"},
+      {date:"Jun 23 | 22:00",teams:"Colombia vs DR Congo",city:"Guadalajara 🇲🇽"},
+      {date:"Jun 27 | 19:30",teams:"Colombia vs Portugal",city:"Miami 🇺🇸"},
+      {date:"Jun 27 | 19:30",teams:"DR Congo vs Uzbekistan",city:"Atlanta 🇺🇸"},
     ]},
-  L: { name:"L", teams:[{f:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",n:"England"},{f:"🇭🇷",n:"Croatia"},{f:"🇬🇭",n:"Ghana"},{f:"🇵🇦",n:"Panama"}],
+
+  L: { name:"L", teams:[
+      {f:"🏴",n:"England"},{f:"🇭🇷",n:"Croatia"},{f:"🇬🇭",n:"Ghana"},{f:"🇵🇦",n:"Panama"}],
     matches:[
-      {date:"Jun 18",teams:"England vs Panama",city:"Guadalajara 🇲🇽"},
-      {date:"Jun 18",teams:"Croatia vs Ghana",city:"Monterrey 🇲🇽"},
-      {date:"Jun 22",teams:"England vs Croatia",city:"Dallas 🇺🇸"},
-      {date:"Jun 22",teams:"Ghana vs Panama",city:"Atlanta 🇺🇸"},
-      {date:"Jun 26",teams:"England vs Ghana",city:"Houston 🇺🇸"},
-      {date:"Jun 26",teams:"Croatia vs Panama",city:"Kansas City 🇺🇸"},
+      {date:"Jun 17 | 16:00",teams:"England vs Croatia",city:"Dallas 🇺🇸"},
+      {date:"Jun 17 | 19:00",teams:"Ghana vs Panama",city:"Toronto 🇨🇦"},
+      {date:"Jun 23 | 16:00",teams:"England vs Ghana",city:"Boston 🇺🇸"},
+      {date:"Jun 23 | 19:00",teams:"Panama vs Croatia",city:"Toronto 🇨🇦"},
+      {date:"Jun 27 | 17:00",teams:"Panama vs England",city:"New York/NJ 🇺🇸"},
+      {date:"Jun 27 | 17:00",teams:"Croatia vs Ghana",city:"Philadelphia 🇺🇸"},
     ]},
 };
+
 
 const ROUNDS = ["Round of 32","Round of 16","Quarter-Finals","Semi-Finals","Final"];
 
 // Knockout round schedules: date + city for each slot
 const KNOCKOUT_SCHEDULE = {
+
   r32: [
     {date:"Jun 28", city:"Los Angeles 🇺🇸"},
-    {date:"Jun 28", city:"Mexico City 🇲🇽"},
-    {date:"Jun 29", city:"Atlanta 🇺🇸"},
-    {date:"Jun 29", city:"Toronto 🇨🇦"},
-    {date:"Jun 30", city:"Miami 🇺🇸"},
-    {date:"Jun 30", city:"Houston 🇺🇸"},
+
+    {date:"Jun 29", city:"Boston 🇺🇸"},
+    {date:"Jun 29", city:"Monterrey 🇲🇽"},
+    {date:"Jun 29", city:"Houston 🇺🇸"},
+
+    {date:"Jun 30", city:"New York/NJ 🇺🇸"},
+    {date:"Jun 30", city:"Dallas 🇺🇸"},
+    {date:"Jun 30", city:"Mexico City 🇲🇽"},
+
+    {date:"Jul 1", city:"Atlanta 🇺🇸"},
     {date:"Jul 1", city:"San Francisco 🇺🇸"},
     {date:"Jul 1", city:"Seattle 🇺🇸"},
-    {date:"Jul 1", city:"New York/NJ 🇺🇸"},
-    {date:"Jul 2", city:"Los Angeles 🇺🇸"},
+
     {date:"Jul 2", city:"Toronto 🇨🇦"},
+    {date:"Jul 2", city:"Los Angeles 🇺🇸"},
     {date:"Jul 2", city:"Vancouver 🇨🇦"},
-    {date:"Jul 3", city:"Dallas 🇺🇸"},
+
     {date:"Jul 3", city:"Miami 🇺🇸"},
-    {date:"Jul 3", city:"Atlanta 🇺🇸"},
     {date:"Jul 3", city:"Kansas City 🇺🇸"},
+    {date:"Jul 3", city:"Dallas 🇺🇸"},
   ],
+
   r16: [
-    {date:"Jul 4", city:"Houston 🇺🇸"},
     {date:"Jul 4", city:"Philadelphia 🇺🇸"},
+    {date:"Jul 4", city:"Houston 🇺🇸"},
+
     {date:"Jul 5", city:"New York/NJ 🇺🇸"},
     {date:"Jul 5", city:"Mexico City 🇲🇽"},
+
     {date:"Jul 6", city:"Dallas 🇺🇸"},
     {date:"Jul 6", city:"Seattle 🇺🇸"},
+
     {date:"Jul 7", city:"Atlanta 🇺🇸"},
     {date:"Jul 7", city:"Vancouver 🇨🇦"},
   ],
+
   qf: [
     {date:"Jul 9", city:"Boston 🇺🇸"},
     {date:"Jul 10", city:"Los Angeles 🇺🇸"},
     {date:"Jul 11", city:"Miami 🇺🇸"},
     {date:"Jul 11", city:"Kansas City 🇺🇸"},
   ],
+
   sf: [
     {date:"Jul 14", city:"Dallas 🇺🇸"},
     {date:"Jul 15", city:"Atlanta 🇺🇸"},
   ],
+
   final: {date:"Jul 19", city:"New York/NJ 🇺🇸 🏆"},
 };
+
 
 function emptyBracket() {
   const groups = {};
