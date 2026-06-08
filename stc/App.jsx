@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-
-// --- DATA ---
+// ── DATA ────────────────────────────────────────────────────────────────────
 const GROUPS = {
   A: ["Mexico","South Africa","South Korea","Czech Republic"],
   B: ["Canada","Bosnia-Herzegovina","Qatar","Switzerland"],
@@ -19,113 +18,114 @@ const GROUPS = {
 
 // Actual 2026 groups with match schedules
 const REAL_GROUPS = {
-  A: { name:"A", teams:[{f:"🇲🇽",n:"Mexico"},{f:"🇿🇦",n:"South Africa"},{f:"🇰🇷",n:"South Korea"},{f:"🇨🇿",n:"Czechia"}],
+const REAL_GROUPS = {
+  A: { name:"A", teams:[{f:"🇲🇽",n:"México"},{f:"🇿🇦",n:"Sudáfrica"},{f:"🇰🇷",n:"Korea del Sur"},{f:"🇨🇿",n:"Czechia"}],
     matches:[
-      {date:"Jun 11",teams:"Mexico vs South Africa",city:"Mexico City 🇲🇽"},
-      {date:"Jun 11",teams:"South Korea vs Czechia",city:"Guadalajara 🇲🇽"},
-      {date:"Jun 15",teams:"Mexico vs South Korea",city:"Dallas 🇺🇸"},
-      {date:"Jun 15",teams:"South Africa vs Czechia",city:"Atlanta 🇺🇸"},
-      {date:"Jun 19",teams:"Mexico vs Czechia",city:"Houston 🇺🇸"},
-      {date:"Jun 19",teams:"South Africa vs South Korea",city:"Kansas City 🇺🇸"},
+	  {date:"Jun 11 | 15:00",teams:"México vs Sudáfrica",city:"Ciudad de México 🇲🇽"},
+      {date:"Jun 11 | 22:00",teams:"Corea del Sur vs Czechia",city:"Guadalajara 🇲🇽"},
+      {date:"Jun 18 | 12:00",teams:"Czechia vs Sudáfrica",city:"Atlanta 🇺🇸"},
+      {date:"Jun 18 | 21:00",teams:"México vs Corea del Sur",city:"Guadalajara 🇲🇽"},
+      {date:"Jun 24 | 21:00",teams:"México vs Czechia",city:"Ciudad de México 🇲🇽"},
+      {date:"Jun 24 | 21:00",teams:"Sudáfrica vs Corea del Sur",city:"Monterrey 🇲🇽"},
     ]},
-  B: { name:"B", teams:[{f:"🇨🇦",n:"Canada"},{f:"🇧🇦",n:"Bosnia-Herzegovina"},{f:"🇶🇦",n:"Qatar"},{f:"🇨🇭",n:"Switzerland"}],
+  B: { name:"B", teams:[{f:"🇨🇦",n:"Canada"},{f:"🇧🇦",n:"Bosnia-Herzegovina"},{f:"🇶🇦",n:"Qatar"},{f:"🇨🇭",n:"Suiza"}],
     matches:[
-      {date:"Jun 12",teams:"Canada vs Bosnia-Herzegovina",city:"Toronto 🇨🇦"},
-      {date:"Jun 13",teams:"Qatar vs Switzerland",city:"Dallas 🇺🇸"},
-      {date:"Jun 16",teams:"Canada vs Qatar",city:"Vancouver 🇨🇦"},
-      {date:"Jun 17",teams:"Switzerland vs Bosnia-Herzegovina",city:"Seattle 🇺🇸"},
-      {date:"Jun 21",teams:"Canada vs Switzerland",city:"Vancouver 🇨🇦"},
-      {date:"Jun 21",teams:"Bosnia-Herzegovina vs Qatar",city:"Philadelphia 🇺🇸"},
+      {date:"Jun 12 | 15:00",teams:"Canada vs Bosnia-Herzegovina",city:"Toronto 🇨🇦"},
+      {date:"Jun 13 | 15:00",teams:"Qatar vs Suiza",city:"San Francisco 🇺🇸"},
+      {date:"Jun 18 | 18:00",teams:"Canada vs Qatar",city:"Vancouver 🇨🇦"},
+      {date:"Jun 18 | 15:00",teams:"Suiza vs Bosnia-Herzegovina",city:"Los Angeles 🇺🇸"},
+      {date:"Jun 24 | 15:00",teams:"Canada vs Suiza",city:"Vancouver 🇨🇦"},
+      {date:"Jun 24 | 15:00",teams:"Bosnia-Herzegovina vs Qatar",city:"Seattle 🇺🇸"},
     ]},
-  C: { name:"C", teams:[{f:"🇧🇷",n:"Brazil"},{f:"🇲🇦",n:"Morocco"},{f:"🇭🇹",n:"Haiti"},{f:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",n:"Scotland"}],
+  C: { name:"C", teams:[{f:"🇧🇷",n:"Brasil"},{f:"🇲🇦",n:"Morocco"},{f:"🇭🇹",n:"Haiti"},{f:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",n:"Escocia"}],
     matches:[
-      {date:"Jun 13",teams:"Brazil vs Morocco",city:"New York/NJ 🇺🇸"},
-      {date:"Jun 13",teams:"Haiti vs Scotland",city:"Boston 🇺🇸"},
-      {date:"Jun 17",teams:"Brazil vs Haiti",city:"San Francisco 🇺🇸"},
-      {date:"Jun 17",teams:"Morocco vs Scotland",city:"Miami 🇺🇸"},
-      {date:"Jun 21",teams:"Brazil vs Scotland",city:"Atlanta 🇺🇸"},
-      {date:"Jun 21",teams:"Morocco vs Haiti",city:"Los Angeles 🇺🇸"},
+      {date:"Jun 13 | 18:00",teams:"Brasil vs Marruecos",city:"New York/NJ 🇺🇸"},
+      {date:"Jun 13 | 21:00",teams:"Haití vs Escocia",city:"Boston 🇺🇸"},
+      {date:"Jun 19 | 18:00",teams:"Escocia vs Marruecos",city:"Boston 🇺🇸"},
+      {date:"Jun 19 | 21:00",teams:"Brasil vs Haití",city:"Philadelphia 🇺🇸"},
+      {date:"Jun 24 | 18:00",teams:"Escocia vs Brasil",city:"Miami 🇺🇸"},
+      {date:"Jun 24 | 18:00",teams:"Marruecos vs Haití",city:"Atlanta 🇺🇸"},
     ]},
-  D: { name:"D", teams:[{f:"🇺🇸",n:"USA"},{f:"🇵🇾",n:"Paraguay"},{f:"🇦🇺",n:"Australia"},{f:"🇹🇷",n:"Turkey"}],
+  D: { name:"D", teams:[{f:"🇺🇸",n:"USA"},{f:"🇵🇾",n:"Paraguay"},{f:"🇦🇺",n:"Australia"},{f:"🇹🇷",n:"Turquía"}],
     matches:[
-      {date:"Jun 12",teams:"USA vs Paraguay",city:"Los Angeles 🇺🇸"},
-      {date:"Jun 13",teams:"Australia vs Turkey",city:"Vancouver 🇨🇦"},
-      {date:"Jun 17",teams:"USA vs Australia",city:"New York/NJ 🇺🇸"},
-      {date:"Jun 17",teams:"Turkey vs Paraguay",city:"Houston 🇺🇸"},
-      {date:"Jun 21",teams:"USA vs Turkey",city:"Seattle 🇺🇸"},
-      {date:"Jun 21",teams:"Australia vs Paraguay",city:"Kansas City 🇺🇸"},
+      {date:"Jun 12 | 21:00",teams:"USA vs Paraguay",city:"Los Angeles 🇺🇸"},
+      {date:"Jun 14 | 00:00",teams:"Australia vs Turquía",city:"Vancouver 🇨🇦"},
+      {date:"Jun 19 | 15:00",teams:"USA vs Australia",city:"Seattle 🇺🇸"},
+      {date:"Jun 20 | 00:00",teams:"Turquía vs Paraguay",city:"San Francisco 🇺🇸"},
+      {date:"Jun 25 | 22:00",teams:"Turquía vs USA",city:"Los Angeles 🇺🇸"},
+      {date:"Jun 25 | 22:00",teams:"Paraguay vs Australia",city:"San Francisco 🇺🇸"},
     ]},
-  E: { name:"E", teams:[{f:"🇩🇪",n:"Germany"},{f:"🇨🇼",n:"Curaçao"},{f:"🇨🇮",n:"Ivory Coast"},{f:"🇪🇨",n:"Ecuador"}],
+  E: { name:"E", teams:[{f:"🇩🇪",n:"Alemania"},{f:"🇨🇼",n:"Curaçao"},{f:"🇨🇮",n:"Costa de Marfil"},{f:"🇪🇨",n:"Ecuador"}],
     matches:[
-      {date:"Jun 14",teams:"Germany vs Curaçao",city:"Philadelphia 🇺🇸"},
-      {date:"Jun 14",teams:"Ivory Coast vs Ecuador",city:"Boston 🇺🇸"},
-      {date:"Jun 18",teams:"Germany vs Ivory Coast",city:"Dallas 🇺🇸"},
-      {date:"Jun 18",teams:"Ecuador vs Curaçao",city:"Miami 🇺🇸"},
-      {date:"Jun 22",teams:"Germany vs Ecuador",city:"Los Angeles 🇺🇸"},
-      {date:"Jun 22",teams:"Ivory Coast vs Curaçao",city:"Atlanta 🇺🇸"},
+      {date:"Jun 14 | 13:00",teams:"Alemania vs Curaçao",city:"Houston 🇺🇸"},
+      {date:"Jun 14 | 19:00",teams:"Costa de Marfil vs Ecuador",city:"Philadelphia 🇺🇸"},
+      {date:"Jun 20 | 16:00",teams:"Alemania vs Costa de Marfil",city:"Toronto 🇨🇦"},
+      {date:"Jun 20 | 22:00",teams:"Ecuador vs Curaçao",city:"Kansas City 🇺🇸"},
+      {date:"Jun 25 | 16:00",teams:"Curaçao vs Costa de Marfil",city:"Philadelphia 🇺🇸"},
+      {date:"Jun 25 | 16:00",teams:"Ecuador vs Alemania",city:"New York/NJ 🇺🇸"},
     ]},
-  F: { name:"F", teams:[{f:"🇳🇱",n:"Netherlands"},{f:"🇯🇵",n:"Japan"},{f:"🇸🇪",n:"Sweden"},{f:"🇹🇳",n:"Tunisia"}],
+  F: { name:"F", teams:[{f:"🇳🇱",n:"Netherlands"},{f:"🇯🇵",n:"Japón"},{f:"🇸🇪",n:"Sweden"},{f:"🇹🇳",n:"Túnez"}],
     matches:[
-      {date:"Jun 14",teams:"Netherlands vs Tunisia",city:"Kansas City 🇺🇸"},
-      {date:"Jun 14",teams:"Japan vs Sweden",city:"Houston 🇺🇸"},
-      {date:"Jun 18",teams:"Netherlands vs Japan",city:"San Francisco 🇺🇸"},
-      {date:"Jun 19",teams:"Sweden vs Tunisia",city:"Seattle 🇺🇸"},
-      {date:"Jun 22",teams:"Netherlands vs Sweden",city:"Miami 🇺🇸"},
-      {date:"Jun 22",teams:"Japan vs Tunisia",city:"New York/NJ 🇺🇸"},
+      {date:"Jun 14 | 16:00",teams:"Netherlands vs Japón",city:"Dallas 🇺🇸"},
+      {date:"Jun 14 | 22:00",teams:"Suecia vs Túnez",city:"Monterrey 🇲🇽"},
+      {date:"Jun 20 | 13:00",teams:"Netherlands vs Suecia",city:"Houston 🇺🇸"},
+      {date:"Jun 21 | 00:00",teams:"Túnez vs Japón",city:"Monterrey 🇲🇽"},
+      {date:"Jun 25 | 19:00",teams:"Japón vs Suecia",city:"Dallas 🇺🇸"},
+      {date:"Jun 25 | 19:00",teams:"Túnez vs Netherlands",city:"Kansas City 🇺🇸"},
     ]},
-  G: { name:"G", teams:[{f:"🇧🇪",n:"Belgium"},{f:"🇪🇬",n:"Egypt"},{f:"🇮🇷",n:"Iran"},{f:"🇳🇿",n:"New Zealand"}],
+  G: { name:"G", teams:[{f:"🇧🇪",n:"Bélgica"},{f:"🇪🇬",n:"Egipto"},{f:"🇮🇷",n:"Iran"},{f:"🇳🇿",n:"Nueva Zelandia"}],
     matches:[
-      {date:"Jun 15",teams:"Belgium vs Egypt",city:"Monterrey 🇲🇽"},
-      {date:"Jun 15",teams:"Iran vs New Zealand",city:"Guadalajara 🇲🇽"},
-      {date:"Jun 19",teams:"Belgium vs Iran",city:"Boston 🇺🇸"},
-      {date:"Jun 19",teams:"Egypt vs New Zealand",city:"Philadelphia 🇺🇸"},
-      {date:"Jun 23",teams:"Belgium vs New Zealand",city:"Seattle 🇺🇸"},
-      {date:"Jun 23",teams:"Egypt vs Iran",city:"Dallas 🇺🇸"},
+      {date:Jun 15 | 15:00",teams:"Bélgica vs Egipto",city:"Seattle 🇺🇸"},
+      {date:"Jun 15 | 21:00",teams:"Irán vs Nueva Zelanda",city:"Los Angeles 🇺🇸"},
+      {date:"Jun 21 | 15:00",teams:"Bélgica vs Irán",city:"Los Angeles 🇺🇸"},
+      {date:"Jun 21 | 21:00",teams:"Nueva Zelanda vs Egipto",city:"Vancouver 🇨🇦"},
+      {date:"Jun 26 | 23:00",teams:"Egipto vs Irán",city:"Seattle 🇺🇸"},
+     {date:"Jun 26 | 23:00",teams:"Nueva Zelanda vs Bélgica",city:"Vancouver 🇨🇦"},
     ]},
-  H: { name:"H", teams:[{f:"🇪🇸",n:"Spain"},{f:"🇨🇻",n:"Cape Verde"},{f:"🇸🇦",n:"Saudi Arabia"},{f:"🇺🇾",n:"Uruguay"}],
+  H: { name:"H", teams:[{f:"🇪🇸",n:"España"},{f:"🇨🇻",n:"Cabo Verde"},{f:"🇸🇦",n:"Arabia Saudita"},{f:"🇺🇾",n:"Uruguay"}],
     matches:[
-      {date:"Jun 15",teams:"Spain vs Uruguay",city:"Kansas City 🇺🇸"},
-      {date:"Jun 15",teams:"Cape Verde vs Saudi Arabia",city:"Atlanta 🇺🇸"},
-      {date:"Jun 19",teams:"Spain vs Cape Verde",city:"Houston 🇺🇸"},
-      {date:"Jun 20",teams:"Uruguay vs Saudi Arabia",city:"Los Angeles 🇺🇸"},
-      {date:"Jun 23",teams:"Spain vs Saudi Arabia",city:"Miami 🇺🇸"},
-      {date:"Jun 23",teams:"Cape Verde vs Uruguay",city:"San Francisco 🇺🇸"},
+      {date:"Jun 15 | 12:00",teams:"España vs Cabo Verde",city:"Atlanta 🇺🇸"},
+      {date:"Jun 15 | 18:00",teams:"Arabia Saudita vs Uruguay",city:"Miami 🇺🇸"},
+      {date:"Jun 21 | 12:00",teams:"España vs Arabia Saudita",city:"Atlanta 🇺🇸"},
+      {date:"Jun 21 | 15:00",teams:"Uruguay vs Cabo Verde",city:"Miami 🇺🇸"},
+      {date:"Jun 26 | 20:00",teams:"Cabo Verde vs Arabia Saudita",city:"Houston 🇺🇸"},
+      {date:"Jun 26 | 20:00",teams:"Uruguay vs España",city:"Guadalajara 🇲🇽"},
     ]},
-  I: { name:"I", teams:[{f:"🇫🇷",n:"France"},{f:"🇸🇳",n:"Senegal"},{f:"🇮🇶",n:"Iraq"},{f:"🇳🇴",n:"Norway"}],
+  I: { name:"I", teams:[{f:"🇫🇷",n:"Francia"},{f:"🇸🇳",n:"Senegal"},{f:"🇮🇶",n:"Iraq"},{f:"🇳🇴",n:"Noruega"}],
     matches:[
-      {date:"Jun 16",teams:"France vs Senegal",city:"New York/NJ 🇺🇸"},
-      {date:"Jun 16",teams:"Iraq vs Norway",city:"Los Angeles 🇺🇸"},
-      {date:"Jun 20",teams:"France vs Iraq",city:"Atlanta 🇺🇸"},
-      {date:"Jun 20",teams:"Norway vs Senegal",city:"Kansas City 🇺🇸"},
-      {date:"Jun 24",teams:"France vs Norway",city:"Dallas 🇺🇸"},
-      {date:"Jun 24",teams:"Senegal vs Iraq",city:"Houston 🇺🇸"},
+      {date:"Jun 16 | 15:00",teams:"Francia vs Senegal",city:"New York/NJ 🇺🇸"},
+      {date:"Jun 16 | 18:00",teams:"Irak vs Noruega",city:"Boston 🇺🇸"},
+      {date:"Jun 22 | 17:00",teams:"Francia vs Irak",city:"Philadelphia 🇺🇸"},
+      {date:"Jun 22 | 20:00",teams:"Noruega vs Senegal",city:"New York/NJ 🇺🇸"},
+      {date:"Jun 26 | 15:00",teams:"Noruega vs Francia",city:"Boston 🇺🇸"},
+      {date:"Jun 26 | 15:00",teams:"Senegal vs Irak",city:"Toronto 🇨🇦"},
     ]},
-  J: { name:"J", teams:[{f:"🇦🇷",n:"Argentina"},{f:"🇩🇿",n:"Algeria"},{f:"🇦🇹",n:"Austria"},{f:"🇯🇴",n:"Jordan"}],
+  J: { name:"J", teams:[{f:"🇦🇷",n:"Argentina"},{f:"🇩🇿",n:"Algeria"},{f:"🇦🇹",n:"Austria"},{f:"🇯🇴",n:"Jordania"}],
     matches:[
-      {date:"Jun 16",teams:"Argentina vs Algeria",city:"Miami 🇺🇸"},
-      {date:"Jun 17",teams:"Austria vs Jordan",city:"Boston 🇺🇸"},
-      {date:"Jun 20",teams:"Argentina vs Austria",city:"San Francisco 🇺🇸"},
-      {date:"Jun 21",teams:"Algeria vs Jordan",city:"Seattle 🇺🇸"},
-      {date:"Jun 24",teams:"Argentina vs Jordan",city:"Philadelphia 🇺🇸"},
-      {date:"Jun 24",teams:"Algeria vs Austria",city:"New York/NJ 🇺🇸"},
+      {date:"Jun 16 | 21:00",teams:"Argentina vs Argelia",city:"Kansas City 🇺🇸"},
+      {date:"Jun 17 | 00:00",teams:"Austria vs Jordania",city:"San Francisco 🇺🇸"},
+      {date:"Jun 22 | 13:00",teams:"Argentina vs Austria",city:"Dallas 🇺🇸"},
+      {date:"Jun 22 | 23:00",teams:"Jordania vs Argelia",city:"San Francisco 🇺🇸"},
+      {date:"Jun 27 | 22:00",teams:"Argelia vs Austria",city:"Kansas City 🇺🇸"},
+      {date:"Jun 27 | 22:00",teams:"Jordania vs Argentina",city:"Dallas 🇺🇸"},
     ]},
   K: { name:"K", teams:[{f:"🇵🇹",n:"Portugal"},{f:"🇨🇩",n:"DR Congo"},{f:"🇺🇿",n:"Uzbekistan"},{f:"🇨🇴",n:"Colombia"}],
     matches:[
-      {date:"Jun 17",teams:"Portugal vs Uzbekistan",city:"Monterrey 🇲🇽"},
-      {date:"Jun 17",teams:"DR Congo vs Colombia",city:"Mexico City 🇲🇽"},
-      {date:"Jun 21",teams:"Portugal vs DR Congo",city:"Los Angeles 🇺🇸"},
-      {date:"Jun 22",teams:"Colombia vs Uzbekistan",city:"Boston 🇺🇸"},
-      {date:"Jun 25",teams:"Portugal vs Colombia",city:"San Francisco 🇺🇸"},
-      {date:"Jun 25",teams:"DR Congo vs Uzbekistan",city:"Philadelphia 🇺🇸"},
+      {date:"Jun 17 | 13:00",teams:"Portugal vs RD Congo",city:"Houston 🇺🇸"},
+      {date:"Jun 17 | 22:00",teams:"Uzbekistán vs Colombia",city:"Ciudad de México 🇲🇽"},
+      {date:"Jun 23 | 13:00",teams:"Portugal vs Uzbekistán",city:"Houston 🇺🇸"},
+      {date:"Jun 23 | 22:00",teams:"Colombia vs RD Congo",city:"Guadalajara 🇲🇽"},
+      {date:"Jun 27 | 19:30",teams:"Colombia vs Portugal",city:"Miami 🇺🇸"},
+      {date:"Jun 27 | 19:30",teams:"RD Congo vs Uzbekistán",city:"Atlanta 🇺🇸"},
     ]},
-  L: { name:"L", teams:[{f:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",n:"England"},{f:"🇭🇷",n:"Croatia"},{f:"🇬🇭",n:"Ghana"},{f:"🇵🇦",n:"Panama"}],
+  L: { name:"L", teams:[{f:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",n:"Inglaterra"},{f:"🇭🇷",n:"Croatia"},{f:"🇬🇭",n:"Gana"},{f:"🇵🇦",n:"Panamá"}],
     matches:[
-      {date:"Jun 18",teams:"England vs Panama",city:"Guadalajara 🇲🇽"},
-      {date:"Jun 18",teams:"Croatia vs Ghana",city:"Monterrey 🇲🇽"},
-      {date:"Jun 22",teams:"England vs Croatia",city:"Dallas 🇺🇸"},
-      {date:"Jun 22",teams:"Ghana vs Panama",city:"Atlanta 🇺🇸"},
-      {date:"Jun 26",teams:"England vs Ghana",city:"Houston 🇺🇸"},
-      {date:"Jun 26",teams:"Croatia vs Panama",city:"Kansas City 🇺🇸"},
+      {date:"Jun 17 | 16:00",teams:"Inglaterra vs Croacia",city:"Dallas 🇺🇸"},
+      {date:"Jun 17 | 19:00",teams:"Ghana vs Panamá",city:"Toronto 🇨🇦"},
+      {date:"Jun 23 | 16:00",teams:"Inglaterra vs Ghana",city:"Boston 🇺🇸"},
+      {date:"Jun 23 | 19:00",teams:"Panamá vs Croacia",city:"Toronto 🇨🇦"},
+      {date:"Jun 27 | 17:00",teams:"Panamá vs Inglaterra",city:"New York/NJ 🇺🇸"},
+      {date:"Jun 27 | 17:00",teams:"Croacia vs Ghana",city:"Philadelphia 🇺🇸"}
     ]},
 };
 
@@ -135,34 +135,34 @@ const ROUNDS = ["Round of 32","Round of 16","Quarter-Finals","Semi-Finals","Fina
 const KNOCKOUT_SCHEDULE = {
   r32: [
     {date:"Jun 28", city:"Los Angeles 🇺🇸"},
-    {date:"Jun 28", city:"Mexico City 🇲🇽"},
-    {date:"Jun 29", city:"Atlanta 🇺🇸"},
-    {date:"Jun 29", city:"Toronto 🇨🇦"},
-    {date:"Jun 30", city:"Miami 🇺🇸"},
-    {date:"Jun 30", city:"Houston 🇺🇸"},
-    {date:"Jul 1",  city:"San Francisco 🇺🇸"},
-    {date:"Jul 1",  city:"Seattle 🇺🇸"},
-    {date:"Jul 1",  city:"New York/NJ 🇺🇸"},
-    {date:"Jul 2",  city:"Los Angeles 🇺🇸"},
-    {date:"Jul 2",  city:"Toronto 🇨🇦"},
-    {date:"Jul 2",  city:"Vancouver 🇨🇦"},
-    {date:"Jul 3",  city:"Dallas 🇺🇸"},
-    {date:"Jul 3",  city:"Miami 🇺🇸"},
-    {date:"Jul 3",  city:"Atlanta 🇺🇸"},
-    {date:"Jul 3",  city:"Kansas City 🇺🇸"},
+    {date:"Jun 29", city:"Boston 🇺🇸"},
+    {date:"Jun 29", city:"Monterrey 🇲🇽"},
+    {date:"Jun 29", city:"Houston 🇺🇸"},
+    {date:"Jun 30", city:"New York/NJ 🇺🇸"},
+    {date:"Jun 30", city:"Dallas 🇺🇸"},
+    {date:"Jun 30", city:"Ciudad de México 🇲🇽"},
+    {date:"Jul 1", city:"Atlanta 🇺🇸"},
+    {date:"Jul 1", city:"San Francisco 🇺🇸"},
+    {date:"Jul 1", city:"Seattle 🇺🇸"},
+    {date:"Jul 2", city:"Toronto 🇨🇦"},
+    {date:"Jul 2", city:"Los Angeles 🇺🇸"},
+    {date:"Jul 2", city:"Vancouver 🇨🇦"},
+    {date:"Jul 3", city:"Miami 🇺🇸"},
+    {date:"Jul 3", city:"Kansas City 🇺🇸"},
+    {date:"Jul 3", city:"Dallas 🇺🇸"},
   ],
   r16: [
-    {date:"Jul 4",  city:"Houston 🇺🇸"},
-    {date:"Jul 4",  city:"Philadelphia 🇺🇸"},
-    {date:"Jul 5",  city:"New York/NJ 🇺🇸"},
-    {date:"Jul 5",  city:"Mexico City 🇲🇽"},
-    {date:"Jul 6",  city:"Dallas 🇺🇸"},
-    {date:"Jul 6",  city:"Seattle 🇺🇸"},
-    {date:"Jul 7",  city:"Atlanta 🇺🇸"},
-    {date:"Jul 7",  city:"Vancouver 🇨🇦"},
+    {date:"Jul 4", city:"Philadelphia 🇺🇸"},
+    {date:"Jul 4", city:"Houston 🇺🇸"},
+    {date:"Jul 5", city:"New York/NJ 🇺🇸"},
+    {date:"Jul 5", city:"Ciudad de México 🇲🇽"},
+    {date:"Jul 6", city:"Dallas 🇺🇸"},
+    {date:"Jul 6", city:"Seattle 🇺🇸"},
+    {date:"Jul 7", city:"Atlanta 🇺🇸"},
+    {date:"Jul 7", city:"Vancouver 🇨🇦"},
   ],
   qf: [
-    {date:"Jul 9",  city:"Boston 🇺🇸"},
+    {date:"Jul 9", city:"Boston 🇺🇸"},
     {date:"Jul 10", city:"Los Angeles 🇺🇸"},
     {date:"Jul 11", city:"Miami 🇺🇸"},
     {date:"Jul 11", city:"Kansas City 🇺🇸"},
@@ -175,16 +175,15 @@ const KNOCKOUT_SCHEDULE = {
 };
 
 function emptyBracket() {
-  // groups: {A: [1st,2nd], B:[1st,2nd], ...}
-  // knockout: rounds array
   const groups = {};
   Object.keys(REAL_GROUPS).forEach(k => { groups[k] = [null, null]; });
   return {
     name: "",
     champion: null,
     groups,
+    thirdPicks: [], // 8 best 3rd-place teams chosen by user
     knockout: {
-      r32: Array(16).fill(null),   // 16 matches
+      r32: Array(16).fill(null),
       r16: Array(8).fill(null),
       qf: Array(4).fill(null),
       sf: Array(2).fill(null),
@@ -197,13 +196,19 @@ function calcScore(bracket, results) {
   // results has same shape as bracket
   if (!results) return 0;
   let score = 0;
-  // group picks: 1pt per correct 1st/2nd
+  // group picks: 2pt per correct 1st/2nd
   Object.keys(bracket.groups).forEach(g => {
     [0,1].forEach(i => {
       if (bracket.groups[g][i] && results.groups[g][i] &&
           bracket.groups[g][i] === results.groups[g][i]) score += 2;
     });
   });
+  // 3rd place picks: 1pt each correct
+  if (bracket.thirdPicks && results.thirdPicks) {
+    bracket.thirdPicks.forEach(t => {
+      if (results.thirdPicks.includes(t)) score += 1;
+    });
+  }
   // knockout: 2/4/6/8/12 pts
   const pts = { r32:2, r16:4, qf:6, sf:8, final:12 };
   Object.keys(pts).forEach(round => {
@@ -496,10 +501,16 @@ export default function App() {
     const g = Object.keys(REAL_GROUPS);
     const winners = g.map(k => currentBracket.groups[k][0]);
     const runners = g.map(k => currentBracket.groups[k][1]);
+    const thirds = currentBracket.thirdPicks || [];
+    // Build 24-team pool: 12 winners + 12 runners-up + 8 chosen 3rd-place teams
+    // Pair: winners vs runners from adjacent groups for slots 0-7 (8 matches)
+    // winners vs 3rd-place picks for slots 8-15 (8 matches)
     const pairs = [];
     for (let i = 0; i < 8; i++) {
       pairs.push([winners[i*2] || null, runners[i*2+1] || null]);
-      pairs.push([winners[i*2+1] || null, runners[i*2] || null]);
+    }
+    for (let i = 0; i < 8; i++) {
+      pairs.push([runners[i] || null, thirds[i] || null]);
     }
     return pairs.slice(0,16);
   })();
@@ -511,8 +522,8 @@ export default function App() {
       const arr = [...ko[round]]; arr[idx] = team; ko[round] = arr;
       if (round === "r32") { ko.r16 = Array(8).fill(null); ko.qf = Array(4).fill(null); ko.sf = Array(2).fill(null); ko.final = null; }
       if (round === "r16") { ko.qf = Array(4).fill(null); ko.sf = Array(2).fill(null); ko.final = null; }
-      if (round === "qf")  { ko.sf = Array(2).fill(null); ko.final = null; }
-      if (round === "sf")  { ko.final = null; }
+      if (round === "qf") { ko.sf = Array(2).fill(null); ko.final = null; }
+      if (round === "sf") { ko.final = null; }
       return { ...b, knockout: ko };
     });
   }
@@ -634,6 +645,7 @@ export default function App() {
               <div className="font-bold text-white mb-2">🎯 Scoring</div>
               <div className="grid grid-cols-2 gap-1 text-sm text-white/60">
                 <div>✅ Group picks: <span className="text-yellow-400 font-bold">2 pts</span></div>
+                <div>✅ 3rd place pick: <span className="text-yellow-400 font-bold">1 pt</span></div>
                 <div>✅ Round of 32: <span className="text-yellow-400 font-bold">2 pts</span></div>
                 <div>✅ Round of 16: <span className="text-yellow-400 font-bold">4 pts</span></div>
                 <div>✅ Quarter-final: <span className="text-yellow-400 font-bold">6 pts</span></div>
@@ -648,9 +660,9 @@ export default function App() {
         {view === "fill" && (
           <div className="space-y-5">
             <div className="flex items-center gap-2">
-              {["name","groups","knockout","done"].map((s,i) => (
+              {["name","groups","thirds","knockout","done"].map((s,i) => (
                 <div key={s} className={`flex-1 h-2 rounded-full transition-all
-                  ${["name","groups","knockout","done"].indexOf(step) >= i ? "bg-yellow-400" : "bg-white/20"}`}/>
+                  ${["name","groups","thirds","knockout","done"].indexOf(step) >= i ? "bg-yellow-400" : "bg-white/20"}`}/>
               ))}
             </div>
 
@@ -687,9 +699,75 @@ export default function App() {
                     picks={currentBracket.groups[k]}
                     onChange={picks => setCurrentBracket(b => ({...b, groups:{...b.groups,[k]:picks}}))}/>
                 ))}
-                <button disabled={!allGroupsFilled} onClick={() => setStep("knockout")}
+                <button disabled={!allGroupsFilled} onClick={() => setStep("thirds")}
                   className="w-full bg-yellow-400 disabled:bg-white/20 disabled:text-white/30 text-gray-900 font-black text-xl rounded-2xl py-4 transition-all active:scale-95 sticky bottom-4">
-                  {allGroupsFilled ? "Next: Knockout Rounds →" : `Fill all 12 groups first (${Object.keys(REAL_GROUPS).filter(k=>currentBracket.groups[k][0]&&currentBracket.groups[k][1]).length}/12)`}
+                  {allGroupsFilled ? "Next: Pick Best 3rd Place Teams →" : `Fill all 12 groups first (${Object.keys(REAL_GROUPS).filter(k=>currentBracket.groups[k][0]&&currentBracket.groups[k][1]).length}/12)`}
+                </button>
+              </div>
+            )}
+
+            {step === "thirds" && (
+              <div className="space-y-4">
+                <div className="text-center">
+                  <div className="text-4xl mb-2">🥉</div>
+                  <h2 className="text-white text-xl font-black">Best 3rd Place Teams</h2>
+                  <p className="text-white/60 text-sm mt-1">
+                    In the 2026 World Cup, 8 of the 12 group 3rd-place teams also advance to the Round of 32.
+                    Pick which 8 you think will make it!
+                  </p>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 flex items-center justify-between">
+                  <span className="text-white/60 text-sm">Selected</span>
+                  <span className={`font-black text-lg ${currentBracket.thirdPicks.length === 8 ? "text-green-400" : "text-yellow-400"}`}>
+                    {currentBracket.thirdPicks.length} / 8
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 gap-2">
+                  {Object.keys(REAL_GROUPS).map(k => {
+                    const thirdTeam = REAL_GROUPS[k].teams.find(t =>
+                      t.n !== currentBracket.groups[k][0] && t.n !== currentBracket.groups[k][1]
+                    ) || REAL_GROUPS[k].teams[2];
+                    // Actually show all teams NOT picked as 1st or 2nd
+                    const thirds = REAL_GROUPS[k].teams.filter(t =>
+                      t.n !== currentBracket.groups[k][0] && t.n !== currentBracket.groups[k][1]
+                    );
+                    return thirds.map(t => {
+                      const picked = currentBracket.thirdPicks.includes(t.n);
+                      const full = currentBracket.thirdPicks.length >= 8 && !picked;
+                      return (
+                        <button key={t.n}
+                          disabled={full}
+                          onClick={() => {
+                            setCurrentBracket(b => {
+                              const prev = b.thirdPicks;
+                              const next = prev.includes(t.n)
+                                ? prev.filter(x => x !== t.n)
+                                : prev.length < 8 ? [...prev, t.n] : prev;
+                              return { ...b, thirdPicks: next };
+                            });
+                          }}
+                          className={`flex items-center gap-3 rounded-xl px-4 py-3 border-2 transition-all font-bold text-sm
+                            ${picked
+                              ? "border-green-400 bg-green-400/20 text-green-200"
+                              : full
+                              ? "border-white/10 bg-white/5 text-white/30 cursor-not-allowed"
+                              : "border-white/20 bg-white/5 text-white hover:bg-white/15"}`}>
+                          <span className="bg-yellow-400/20 text-yellow-400 text-xs font-black w-6 h-6 rounded-full flex items-center justify-center">
+                            {k}
+                          </span>
+                          <span className="text-xl">{t.f}</span>
+                          <span className="flex-1 text-left">{t.n}</span>
+                          {picked && <span className="text-green-400 font-black">✓ Advances</span>}
+                        </button>
+                      );
+                    });
+                  })}
+                </div>
+                <button
+                  disabled={currentBracket.thirdPicks.length !== 8}
+                  onClick={() => setStep("knockout")}
+                  className="w-full bg-yellow-400 disabled:bg-white/20 disabled:text-white/30 text-gray-900 font-black text-xl rounded-2xl py-4 transition-all active:scale-95 sticky bottom-4">
+                  {currentBracket.thirdPicks.length === 8 ? "Next: Knockout Rounds →" : `Pick ${8 - currentBracket.thirdPicks.length} more teams`}
                 </button>
               </div>
             )}
