@@ -1,5 +1,230 @@
 import { useState, useEffect, useCallback } from "react";
 
+// ── TRANSLATIONS ─────────────────────────────────────────────────────────────
+const T = {
+  en: {
+    appTitle: "Family Bracket",
+    appSubtitle: "FIFA World Cup 2026",
+    langBtn: "🇪🇸 Español",
+    // Room screen
+    enterRoomCode: "Enter Your Room Code",
+    roomHint: "Each group has its own private room. Create one or join an existing one.",
+    roomPlaceholder: "e.g. FAMILY2026",
+    joinRoom: "🚪 Join Room",
+    createRoom: "✨ Create Room",
+    tip1: "💡 Share the same code with your group",
+    tip2: "🔒 Different code = different private pool",
+    tip3Family: "👨‍👩‍👧‍👦 Family uses",
+    tip3Friends: "👯 Friends use",
+    // Nav
+    home: "Home", leaderboard: "Leaderboard", admin: "Admin", switchRoom: "Switch room",
+    // Home
+    room: "Room",
+    fillBracket: "Fill My Bracket",
+    bracketsInRoom: "Brackets in this room",
+    inviteTitle: "📱 Invite to this room",
+    inviteDesc: "Share the link + your room code with your group.",
+    inviteNote: "Only people with this code can see this leaderboard.",
+    copyBtn: "📋 Copy",
+    copiedMsg: "📋 Copied link + code!",
+    scoringTitle: "🎯 Scoring",
+    scoringGroup: "Group picks:",
+    scoring3rd: "3rd place pick:",
+    scoringR32: "Round of 32:",
+    scoringR16: "Round of 16:",
+    scoringQF: "Quarter-final:",
+    scoringSF: "Semi-final:",
+    scoringChamp: "Champion:",
+    // Fill steps
+    stepName: "What's your name?",
+    stepNameSub: "So everyone knows whose bracket this is!",
+    stepNamePlaceholder: "e.g. Dad, Emma, Uncle Carlos…",
+    nextGroups: "Next: Pick Groups →",
+    stepGroups: "⚽ Group Stage",
+    stepGroupsSub: "Pick 1st and 2nd place in each group",
+    groupsDone: "done",
+    fillGroupsFirst: "Fill all 12 groups first",
+    nextThirds: "Next: Pick Best 3rd Place Teams →",
+    pick1st: "Pick 1st", pick2nd: "Pick 2nd",
+    hideMatches: "Hide", showMatches: "📅 Matches",
+    // Thirds step
+    stepThirds: "Best 3rd Place Teams",
+    stepThirdsSub: "In the 2026 World Cup, 8 of the 12 group 3rd-place teams also advance to the Round of 32. Pick which 8 you think will make it!",
+    selected: "Selected",
+    advances: "✓ Advances",
+    nextR32: "Next: Round of 32 →",
+    pickMore: "Pick more teams",
+    // Knockout rounds
+    pickWinner: "Pick the winner of each match",
+    roundOf32: "Round of 32",
+    r32Dates: "Jun 28 – Jul 3",
+    nextR16: "Next: Round of 16 →",
+    pickAll16: "Pick all 16 winners",
+    roundOf16: "Round of 16",
+    r16Dates: "Jul 4 – 7",
+    nextQF: "Next: Quarter-Finals →",
+    pickAll8: "Pick all 8 winners",
+    quarterFinals: "Quarter-Finals",
+    qfDates: "Jul 9 – 11",
+    nextSF: "Next: Semi-Finals →",
+    pickAll4: "Pick all 4 winners",
+    semiFinals: "Semi-Finals",
+    sfDates: "Jul 14 – 15",
+    nextFinal: "Next: The Final →",
+    pickBoth: "Pick both finalists",
+    theFinal: "The Final",
+    finalDate: "Jul 19 · MetLife Stadium, New York/NJ",
+    worldFinal: "World Cup Final",
+    worldChampion: "'s World Champion",
+    saveBracket: "💾 Save My Bracket!",
+    pickChampFirst: "Pick the Champion first",
+    // Progress bar back btn
+    back: "← Back",
+    // Leaderboard
+    leaderboardTitle: "🏆 Leaderboard",
+    noBrackets: "No brackets yet! Be the first to fill one.",
+    fillFirst: "Fill My Bracket",
+    picked: "Picked:",
+    pts: "pts",
+    edit: "Edit",
+    addBracket: "✏️ Add Another Bracket",
+    // Admin
+    adminTitle: "Admin",
+    adminEnter: "Enter the admin code for room",
+    adminPlaceholder: "Admin code…",
+    unlock: "Unlock",
+    wrongCode: "Wrong code!",
+    adminCodeLabel: "Admin code for this room:",
+    adminSave: "Save this — it's only shown here.",
+    adminUnlocked: "✅ Admin unlocked",
+    manageBrackets: "🗑️ Manage Brackets",
+    noBracketsYet: "No brackets yet.",
+    remove: "Remove",
+    bracketRemoved: "Bracket removed",
+    resetRoom: "🔄 Reset Room",
+    resetDesc: "Deletes ALL brackets in",
+    resetBtn: "🗑️ Reset All Brackets",
+    resetConfirm: "Delete all brackets in room",
+    roomReset: "Room reset!",
+    bracketSaved: "🎉 Bracket saved!",
+    match: "Match",
+    waitingPicks: "Waiting for group picks…",
+    sfMatch: "Semi-Final",
+    qfMatch: "QF Match",
+  },
+  es: {
+    appTitle: "Bracket Familiar",
+    appSubtitle: "Copa Mundial FIFA 2026",
+    langBtn: "🇺🇸 English",
+    // Room screen
+    enterRoomCode: "Ingresa tu Código de Sala",
+    roomHint: "Cada grupo tiene su sala privada. ¡Crea una o únete a una existente!",
+    roomPlaceholder: "ej. FAMILIA2026",
+    joinRoom: "🚪 Entrar a la Sala",
+    createRoom: "✨ Crear Sala",
+    tip1: "💡 Comparte el mismo código con tu grupo",
+    tip2: "🔒 Código diferente = grupo privado diferente",
+    tip3Family: "👨‍👩‍👧‍👦 Familia usa",
+    tip3Friends: "👯 Amigos usan",
+    // Nav
+    home: "Inicio", leaderboard: "Tabla", admin: "Admin", switchRoom: "Cambiar sala",
+    // Home
+    room: "Sala",
+    fillBracket: "Llenar mi Bracket",
+    bracketsInRoom: "Brackets en esta sala",
+    inviteTitle: "📱 Invitar a esta sala",
+    inviteDesc: "Comparte el enlace + el código con tu grupo.",
+    inviteNote: "Solo quienes tengan el código verán esta tabla.",
+    copyBtn: "📋 Copiar",
+    copiedMsg: "📋 ¡Enlace y código copiados!",
+    scoringTitle: "🎯 Puntuación",
+    scoringGroup: "Picks de grupos:",
+    scoring3rd: "Pick 3er lugar:",
+    scoringR32: "Ronda de 32:",
+    scoringR16: "Ronda de 16:",
+    scoringQF: "Cuartos de final:",
+    scoringSF: "Semifinal:",
+    scoringChamp: "Campeón:",
+    // Fill steps
+    stepName: "¿Cuál es tu nombre?",
+    stepNameSub: "¡Para que todos sepan de quién es el bracket!",
+    stepNamePlaceholder: "ej. Papá, Emma, Tío Carlos…",
+    nextGroups: "Siguiente: Elegir Grupos →",
+    stepGroups: "⚽ Fase de Grupos",
+    stepGroupsSub: "Elige el 1.° y 2.° lugar en cada grupo",
+    groupsDone: "listos",
+    fillGroupsFirst: "Completa los 12 grupos primero",
+    nextThirds: "Siguiente: Mejores 3ros Lugares →",
+    pick1st: "Elige 1.°", pick2nd: "Elige 2.°",
+    hideMatches: "Ocultar", showMatches: "📅 Partidos",
+    // Thirds step
+    stepThirds: "Mejores Terceros Lugares",
+    stepThirdsSub: "En el Mundial 2026, 8 de los 12 equipos en 3er lugar también avanzan a la Ronda de 32. ¡Elige cuáles 8 crees que pasarán!",
+    selected: "Seleccionados",
+    advances: "✓ Avanza",
+    nextR32: "Siguiente: Ronda de 32 →",
+    pickMore: "Elige más equipos",
+    // Knockout rounds
+    pickWinner: "Elige al ganador de cada partido",
+    roundOf32: "Ronda de 32",
+    r32Dates: "28 Jun – 3 Jul",
+    nextR16: "Siguiente: Ronda de 16 →",
+    pickAll16: "Elige los 16 ganadores",
+    roundOf16: "Ronda de 16",
+    r16Dates: "4 – 7 Jul",
+    nextQF: "Siguiente: Cuartos de Final →",
+    pickAll8: "Elige los 8 ganadores",
+    quarterFinals: "Cuartos de Final",
+    qfDates: "9 – 11 Jul",
+    nextSF: "Siguiente: Semifinales →",
+    pickAll4: "Elige los 4 ganadores",
+    semiFinals: "Semifinales",
+    sfDates: "14 – 15 Jul",
+    nextFinal: "Siguiente: La Final →",
+    pickBoth: "Elige a los 2 finalistas",
+    theFinal: "La Final",
+    finalDate: "19 Jul · Estadio MetLife, Nueva York/NJ",
+    worldFinal: "Final del Mundial",
+    worldChampion: " es el Campeón del Mundo",
+    saveBracket: "💾 ¡Guardar mi Bracket!",
+    pickChampFirst: "Primero elige al campeón",
+    // Progress bar back btn
+    back: "← Atrás",
+    // Leaderboard
+    leaderboardTitle: "🏆 Tabla de Posiciones",
+    noBrackets: "¡Aún no hay brackets! Sé el primero en llenar uno.",
+    fillFirst: "Llenar mi Bracket",
+    picked: "Eligió:",
+    pts: "pts",
+    edit: "Editar",
+    addBracket: "✏️ Agregar otro Bracket",
+    // Admin
+    adminTitle: "Admin",
+    adminEnter: "Ingresa el código admin para la sala",
+    adminPlaceholder: "Código admin…",
+    unlock: "Desbloquear",
+    wrongCode: "¡Código incorrecto!",
+    adminCodeLabel: "Código admin de esta sala:",
+    adminSave: "Guárdalo — solo se muestra aquí.",
+    adminUnlocked: "✅ Admin desbloqueado",
+    manageBrackets: "🗑️ Administrar Brackets",
+    noBracketsYet: "Aún no hay brackets.",
+    remove: "Eliminar",
+    bracketRemoved: "Bracket eliminado",
+    resetRoom: "🔄 Reiniciar Sala",
+    resetDesc: "¡Elimina TODOS los brackets en",
+    resetBtn: "🗑️ Reiniciar todos los Brackets",
+    resetConfirm: "¿Eliminar todos los brackets en la sala",
+    roomReset: "¡Sala reiniciada!",
+    bracketSaved: "🎉 ¡Bracket guardado!",
+    match: "Partido",
+    waitingPicks: "Esperando picks de grupos…",
+    sfMatch: "Semifinal",
+    qfMatch: "Cuartos",
+  },
+};
+
+
 // ── DATA ────────────────────────────────────────────────────────────────────
 const GROUPS = {
   A: ["Mexico","South Africa","South Korea","Czech Republic"],
@@ -42,7 +267,7 @@ const REAL_GROUPS = {
     ]},
 
   C: { name:"C", teams:[
-      {f:"🇧🇷",n:"Brazil"},{f:"🇲🇦",n:"Morocco"},{f:"🇭🇹",n:"Haiti"},{f:"🏴",n:"Scotland"}],
+      {f:"🇧🇷",n:"Brazil"},{f:"🇲🇦",n:"Morocco"},{f:"🇭🇹",n:"Haiti"},{f:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",n:"Scotland"}],
     matches:[
       {date:"Jun 13 | 18:00",teams:"Brazil vs Morocco",city:"New York/NJ 🇺🇸"},
       {date:"Jun 13 | 21:00",teams:"Haiti vs Scotland",city:"Boston 🇺🇸"},
@@ -141,7 +366,7 @@ const REAL_GROUPS = {
     ]},
 
   L: { name:"L", teams:[
-      {f:"🏴",n:"England"},{f:"🇭🇷",n:"Croatia"},{f:"🇬🇭",n:"Ghana"},{f:"🇵🇦",n:"Panama"}],
+      {f:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",n:"England"},{f:"🇭🇷",n:"Croatia"},{f:"🇬🇭",n:"Ghana"},{f:"🇵🇦",n:"Panama"}],
     matches:[
       {date:"Jun 17 | 16:00",teams:"England vs Croatia",city:"Dallas 🇺🇸"},
       {date:"Jun 17 | 19:00",teams:"Ghana vs Panama",city:"Toronto 🇨🇦"},
@@ -299,7 +524,7 @@ function TeamBtn({ team, selected, onClick, size="md" }) {
   );
 }
 
-function GroupCard({ groupKey, group, picks, onChange }) {
+function GroupCard({ groupKey, group, picks, onChange, t }) {
   const [showSchedule, setShowSchedule] = useState(false);
   return (
     <div className="bg-white/10 backdrop-blur rounded-2xl p-4 border border-white/20">
@@ -308,11 +533,11 @@ function GroupCard({ groupKey, group, picks, onChange }) {
           <span className="bg-yellow-400 text-gray-900 font-black text-lg w-8 h-8 rounded-full flex items-center justify-center">
             {groupKey}
           </span>
-          <span className="text-white/60 text-sm">Pick 1st & 2nd place</span>
+          <span className="text-white/60 text-sm">{t.stepGroupsSub.slice(0,20)}</span>
         </div>
         <button onClick={() => setShowSchedule(s => !s)}
           className="text-xs text-blue-300 border border-blue-400/30 rounded-lg px-2 py-1 hover:bg-blue-400/10 transition-all">
-          {showSchedule ? "Hide" : "📅 Matches"}
+          {showSchedule ? (t ? t.hideMatches : "Hide") : (t ? t.showMatches : "📅 Matches")}
         </button>
       </div>
 
@@ -347,23 +572,23 @@ function GroupCard({ groupKey, group, picks, onChange }) {
           >
             <span className="text-xl">{t.f}</span>
             <span className="truncate">{t.n}</span>
-            {picks&&picks[0]===t.n && <span className="ml-auto text-xs font-black">1st</span>}
-            {picks&&picks[1]===t.n && <span className="ml-auto text-xs font-black text-green-300">2nd</span>}
+            {picks&&picks[0]===t.n && <span className="ml-auto text-xs font-black">{t ? "1°" : "1st"}</span>}
+            {picks&&picks[1]===t.n && <span className="ml-auto text-xs font-black text-green-300">{t ? "2°" : "2nd"}</span>}
           </button>
         ))}
       </div>
       <div className="flex gap-2 text-xs">
-        <div className="flex items-center gap-1 text-yellow-400"><span>🥇</span>{picks&&picks[0]||"Pick 1st"}</div>
-        <div className="flex items-center gap-1 text-green-400 ml-4"><span>🥈</span>{picks&&picks[1]||"Pick 2nd"}</div>
+        <div className="flex items-center gap-1 text-yellow-400"><span>🥇</span>{picks&&picks[0]||(t?t.pick1st:"Pick 1st")}</div>
+        <div className="flex items-center gap-1 text-green-400 ml-4"><span>🥈</span>{picks&&picks[1]||(t?t.pick2nd:"Pick 2nd")}</div>
       </div>
     </div>
   );
 }
 
-function KnockoutPick({ label, teamA, teamB, winner, onPick, date, city }) {
+function KnockoutPick({ label, teamA, teamB, winner, onPick, date, city, t }) {
   if (!teamA && !teamB) return (
     <div className="bg-white/5 rounded-xl p-3 border border-white/10 text-white/30 text-xs text-center">
-      {label}<br/>Waiting for group picks…
+      {label}<br/>{t ? t.waitingPicks : 'Waiting for group picks…'}
     </div>
   );
   return (
@@ -396,6 +621,11 @@ function KnockoutPick({ label, teamA, teamB, winner, onPick, date, city }) {
 
 // ── MAIN APP ──────────────────────────────────────────────────────────────────
 export default function App() {
+  // Language
+  const [lang, setLang] = useState("en");
+  const t = T[lang];
+  const toggleLang = () => setLang(l => l === "en" ? "es" : "en");
+
   // Room state
   const [roomCode, setRoomCode] = useState("");
   const [roomInput, setRoomInput] = useState("");
@@ -463,21 +693,27 @@ export default function App() {
           <div className="text-center">
             <div className="text-6xl mb-4">🌍⚽🏆</div>
             <h1 style={{fontFamily:"'Fredoka One',sans-serif"}} className="text-4xl text-white font-black mb-2">
-              Family Bracket
+              {t.appTitle}
             </h1>
-            <p className="text-yellow-400 font-bold">FIFA World Cup 2026</p>
+            <p className="text-yellow-400 font-bold">{t.appSubtitle}</p>
           </div>
 
           <div className="w-full bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/20 space-y-5">
+            <div className="flex justify-end">
+              <button onClick={toggleLang}
+                className="text-xs font-bold text-white/60 border border-white/20 rounded-lg px-3 py-1.5 hover:bg-white/10 transition-all">
+                {t.langBtn}
+              </button>
+            </div>
             <div className="text-center">
               <div className="text-3xl mb-2">🔑</div>
-              <h2 className="text-white text-xl font-black">Enter Your Room Code</h2>
-              <p className="text-white/50 text-sm mt-1">Each group has its own private room. Create one or join an existing one.</p>
+              <h2 className="text-white text-xl font-black">{t.enterRoomCode}</h2>
+              <p className="text-white/50 text-sm mt-1">{t.roomHint}</p>
             </div>
 
             <input
               type="text"
-              placeholder="e.g. FAMILY2026"
+              placeholder={t.roomPlaceholder}
               value={roomInput}
               onChange={e => setRoomInput(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,""))}
               onKeyDown={e => e.key==="Enter" && roomInput.trim() && joinRoom(roomInput)}
@@ -489,14 +725,14 @@ export default function App() {
               disabled={!roomInput.trim()}
               onClick={() => joinRoom(roomInput)}
               className="w-full bg-yellow-400 disabled:bg-white/20 disabled:text-white/30 text-gray-900 font-black text-xl rounded-2xl py-4 transition-all active:scale-95">
-              {roomInput && loadRoom(roomInput.toUpperCase()) ? "🚪 Join Room" : "✨ Create Room"}
+              {roomInput && loadRoom(roomInput.toUpperCase()) ? t.joinRoom : t.createRoom}
             </button>
 
             <div className="border-t border-white/10 pt-4 space-y-2 text-sm text-white/40 text-center">
-              <p>💡 Share the same code with your group</p>
-              <p>🔒 Different code = different private pool</p>
-              <p>👨‍👩‍👧‍👦 Family uses <span className="text-white/60 font-bold">FAMILY2026</span></p>
-              <p>👯 Friends use <span className="text-white/60 font-bold">FRIENDS2026</span></p>
+              <p>{t.tip1}</p>
+              <p>{t.tip2}</p>
+              <p>{t.tip3Family} <span className="text-white/60 font-bold">FAMILY2026</span></p>
+              <p>{t.tip3Friends} <span className="text-white/60 font-bold">FRIENDS2026</span></p>
             </div>
           </div>
         </div>
@@ -513,7 +749,7 @@ export default function App() {
     if (editingIdx !== null) { updated[editingIdx] = b; }
     else { updated.push(b); }
     setRoom(r => ({ ...r, brackets: updated }));
-    showToast("🎉 Bracket saved!");
+    showToast(t.bracketSaved);
     setView("leaderboard");
   }
 
@@ -536,21 +772,30 @@ export default function App() {
   );
 
   const r32Teams = (() => {
+    // 12 groups: A(0) B(1) C(2) D(3) E(4) F(5) G(6) H(7) I(8) J(9) K(10) L(11)
     const g = Object.keys(REAL_GROUPS);
-    const winners = g.map(k => currentBracket.groups[k][0]);
-    const runners = g.map(k => currentBracket.groups[k][1]);
-    const thirds = currentBracket.thirdPicks || [];
-    // Build 24-team pool: 12 winners + 12 runners-up + 8 chosen 3rd-place teams
-    // Pair: winners vs runners from adjacent groups for slots 0-7 (8 matches)
-    // winners vs 3rd-place picks for slots 8-15 (8 matches)
-    const pairs = [];
-    for (let i = 0; i < 8; i++) {
-      pairs.push([winners[i*2] || null, runners[i*2+1] || null]);
-    }
-    for (let i = 0; i < 8; i++) {
-      pairs.push([runners[i] || null, thirds[i] || null]);
-    }
-    return pairs.slice(0,16);
+    const W = g.map(k => currentBracket.groups[k][0] || null); // 12 winners
+    const R = g.map(k => currentBracket.groups[k][1] || null); // 12 runners-up
+    const T = currentBracket.thirdPicks || []; // up to 8 chosen 3rd-place
+    // 16 matches: 12 W vs R cross-group pairs + 4 R vs best 3rd-place
+    return [
+      [W[0], R[1]], // A1 vs B2 - Match 1
+      [W[1], R[0]], // B1 vs A2 - Match 2
+      [W[2], R[3]], // C1 vs D2 - Match 3
+      [W[3], R[2]], // D1 vs C2 - Match 4
+      [W[4], R[5]], // E1 vs F2 - Match 5
+      [W[5], R[4]], // F1 vs E2 - Match 6
+      [W[6], R[7]], // G1 vs H2 - Match 7
+      [W[7], R[6]], // H1 vs G2 - Match 8
+      [W[8], R[9]], // I1 vs J2 - Match 9
+      [W[9], R[8]], // J1 vs I2 - Match 10
+      [W[10], R[11]], // K1 vs L2 - Match 11
+      [W[11], R[10]], // L1 vs K2 - Match 12
+      [T[0]||null, T[1]||null], // Best 3rd#1 vs Best 3rd#2 - Match 13
+      [T[2]||null, T[3]||null], // Best 3rd#3 vs Best 3rd#4 - Match 14
+      [T[4]||null, T[5]||null], // Best 3rd#5 vs Best 3rd#6 - Match 15
+      [T[6]||null, T[7]||null], // Best 3rd#7 vs Best 3rd#8 - Match 16
+    ];
   })();
 
   function pickKnockout(round, idx, team) {
@@ -594,6 +839,10 @@ export default function App() {
             </div>
           </button>
           <div className="flex gap-1 items-center">
+            <button onClick={toggleLang}
+              className="px-2 py-1.5 rounded-xl text-xs font-bold text-white/50 hover:text-white hover:bg-white/10 transition-all border border-white/20">
+              {lang === "en" ? "🇪🇸" : "🇺🇸"}
+            </button>
             {["home","leaderboard","admin"].map(v => (
               <button key={v} onClick={() => setView(v)}
                 className={`px-2 py-1.5 rounded-xl text-sm font-bold transition-all
@@ -603,7 +852,7 @@ export default function App() {
             ))}
             <button onClick={leaveRoom}
               className="ml-1 px-2 py-1.5 rounded-xl text-sm font-bold text-white/40 hover:text-white hover:bg-white/10 transition-all"
-              title="Switch room">
+              title={t.switchRoom}>
               🚪
             </button>
           </div>
@@ -620,9 +869,9 @@ export default function App() {
               <h1 style={{fontFamily:"'Fredoka One',sans-serif"}} className="text-4xl text-white font-black mb-1">
                 Family Bracket
               </h1>
-              <p className="text-yellow-400 font-bold">FIFA World Cup 2026</p>
+              <p className="text-yellow-400 font-bold">{t.appSubtitle}</p>
               <div className="mt-2 inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-xl px-4 py-2">
-                <span className="text-white/50 text-sm">Room:</span>
+                <span className="text-white/50 text-sm">{t.room}:</span>
                 <span className="text-yellow-400 font-black tracking-widest">{roomCode}</span>
               </div>
             </div>
@@ -631,18 +880,18 @@ export default function App() {
               <button onClick={startNewBracket}
                 className="bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-black text-lg rounded-2xl p-5 transition-all active:scale-95 shadow-lg flex flex-col items-center gap-2">
                 <span className="text-3xl">✏️</span>
-                Fill My Bracket
+                {t.fillBracket}
               </button>
               <button onClick={() => setView("leaderboard")}
                 className="bg-white/10 hover:bg-white/20 text-white font-black text-lg rounded-2xl p-5 transition-all border-2 border-white/20 flex flex-col items-center gap-2">
                 <span className="text-3xl">🏆</span>
-                Leaderboard
+                {t.leaderboard}
               </button>
             </div>
 
             {room.brackets.length > 0 && (
               <div className="bg-white/10 rounded-2xl p-4 border border-white/20">
-                <h3 className="text-white font-black mb-3">👨‍👩‍👧‍👦 Brackets in this room</h3>
+                <h3 className="text-white font-black mb-3">👨‍👩‍👧‍👦 {t.bracketsInRoom}</h3>
                 <div className="space-y-2">
                   {room.brackets.map((b, i) => (
                     <button key={i} onClick={() => editBracket(i)}
@@ -662,33 +911,33 @@ export default function App() {
             )}
 
             <div className="bg-blue-500/20 border border-blue-400/30 rounded-2xl p-4">
-              <h3 className="text-blue-300 font-black mb-2">📱 Invite to this room</h3>
-              <p className="text-white/60 text-sm mb-1">Share the link + your room code with your group.</p>
-              <p className="text-white/40 text-xs mb-3">Only people with this code can see this leaderboard.</p>
+              <h3 className="text-blue-300 font-black mb-2">{t.inviteTitle}</h3>
+              <p className="text-white/60 text-sm mb-1">{t.inviteDesc}</p>
+              <p className="text-white/40 text-xs mb-3">{t.inviteNote}</p>
               <div className="flex gap-2">
                 <div className="flex-1 bg-black/30 rounded-xl px-4 py-3 text-yellow-400 font-black tracking-widest text-center text-lg border border-yellow-400/30">
                   {roomCode}
                 </div>
                 <button onClick={() => {
                     navigator.clipboard.writeText(`${window.location.href.split("?")[0]} — Room code: ${roomCode}`);
-                    showToast("📋 Copied link + code!");
+                    showToast(t.copiedMsg);
                   }}
                   className="bg-blue-500 hover:bg-blue-400 text-white font-black rounded-xl px-4 transition-all">
-                  📋 Copy
+                  {t.copyBtn}
                 </button>
               </div>
             </div>
 
             <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
-              <div className="font-bold text-white mb-2">🎯 Scoring</div>
+              <div className="font-bold text-white mb-2">{t.scoringTitle}</div>
               <div className="grid grid-cols-2 gap-1 text-sm text-white/60">
-                <div>✅ Group picks: <span className="text-yellow-400 font-bold">2 pts</span></div>
-                <div>✅ 3rd place pick: <span className="text-yellow-400 font-bold">1 pt</span></div>
-                <div>✅ Round of 32: <span className="text-yellow-400 font-bold">2 pts</span></div>
-                <div>✅ Round of 16: <span className="text-yellow-400 font-bold">4 pts</span></div>
-                <div>✅ Quarter-final: <span className="text-yellow-400 font-bold">6 pts</span></div>
-                <div>✅ Semi-final: <span className="text-yellow-400 font-bold">8 pts</span></div>
-                <div>✅ Champion: <span className="text-yellow-400 font-bold">12 pts</span></div>
+                <div>✅ {t.scoringGroup} <span className="text-yellow-400 font-bold">2 pts</span></div>
+                <div>✅ {t.scoring3rd} <span className="text-yellow-400 font-bold">1 pt</span></div>
+                <div>✅ {t.scoringR32} <span className="text-yellow-400 font-bold">2 pts</span></div>
+                <div>✅ {t.scoringR16} <span className="text-yellow-400 font-bold">4 pts</span></div>
+                <div>✅ {t.scoringQF} <span className="text-yellow-400 font-bold">6 pts</span></div>
+                <div>✅ {t.scoringSF} <span className="text-yellow-400 font-bold">8 pts</span></div>
+                <div>✅ {t.scoringChamp} <span className="text-yellow-400 font-bold">12 pts</span></div>
               </div>
             </div>
           </div>
@@ -733,8 +982,8 @@ export default function App() {
               <div className="space-y-5">
                 <div className="text-center">
                   <div className="text-5xl mb-3">👤</div>
-                  <h2 className="text-white text-2xl font-black">What's your name?</h2>
-                  <p className="text-white/50 text-sm mt-1">So everyone knows whose bracket this is!</p>
+                  <h2 className="text-white text-2xl font-black">{t.stepName}</h2>
+                  <p className="text-white/50 text-sm mt-1">{t.stepNameSub}</p>
                 </div>
                 <input type="text" placeholder="e.g. Dad, Emma, Uncle Carlos…"
                   value={currentBracket.name}
@@ -743,7 +992,7 @@ export default function App() {
                   maxLength={20}/>
                 <button disabled={!currentBracket.name.trim()} onClick={() => setStep("groups")}
                   className="w-full bg-yellow-400 disabled:bg-white/20 disabled:text-white/30 text-gray-900 font-black text-xl rounded-2xl py-4 transition-all active:scale-95">
-                  Next: Pick Groups →
+                  {t.nextGroups}
                 </button>
               </div>
             )}
@@ -751,16 +1000,17 @@ export default function App() {
             {step === "groups" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-white text-xl font-black">⚽ Group Stage</h2>
+                  <h2 className="text-white text-xl font-black">{t.stepGroups}</h2>
                   <span className="text-white/50 text-sm">
                     {Object.keys(REAL_GROUPS).filter(k=>currentBracket.groups[k][0]&&currentBracket.groups[k][1]).length}/12 done
                   </span>
                 </div>
-                <p className="text-white/60 text-sm">Pick 1st and 2nd place in each group</p>
+                <p className="text-white/60 text-sm">{t.stepGroupsSub}</p>
                 {Object.keys(REAL_GROUPS).map(k => (
                   <GroupCard key={k} groupKey={k} group={REAL_GROUPS[k]}
                     picks={currentBracket.groups[k]}
-                    onChange={picks => setCurrentBracket(b => ({...b, groups:{...b.groups,[k]:picks}}))}/>
+                    onChange={picks => setCurrentBracket(b => ({...b, groups:{...b.groups,[k]:picks}}))}
+                    t={t}/>
                 ))}
                 <button disabled={!allGroupsFilled} onClick={() => setStep("thirds")}
                   className="w-full bg-yellow-400 disabled:bg-white/20 disabled:text-white/30 text-gray-900 font-black text-xl rounded-2xl py-4 transition-all active:scale-95 sticky bottom-4">
@@ -773,64 +1023,59 @@ export default function App() {
               <div className="space-y-4">
                 <div className="text-center">
                   <div className="text-4xl mb-2">🥉</div>
-                  <h2 className="text-white text-xl font-black">Best 3rd Place Teams</h2>
+                  <h2 className="text-white text-xl font-black">{t.stepThirds}</h2>
                   <p className="text-white/60 text-sm mt-1">
-                    In the 2026 World Cup, 8 of the 12 group 3rd-place teams also advance to the Round of 32.
-                    Pick which 8 you think will make it!
+                    {t.stepThirdsSub}
                   </p>
                 </div>
                 <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 flex items-center justify-between">
-                  <span className="text-white/60 text-sm">Selected</span>
+                  <span className="text-white/60 text-sm">{t.selected}</span>
                   <span className={`font-black text-lg ${currentBracket.thirdPicks.length === 8 ? "text-green-400" : "text-yellow-400"}`}>
                     {currentBracket.thirdPicks.length} / 8
                   </span>
                 </div>
                 <div className="grid grid-cols-1 gap-2">
                   {Object.keys(REAL_GROUPS).map(k => {
-                    const thirdTeam = REAL_GROUPS[k].teams.find(t =>
-                      t.n !== currentBracket.groups[k][0] && t.n !== currentBracket.groups[k][1]
-                    ) || REAL_GROUPS[k].teams[2];
-                    // Actually show all teams NOT picked as 1st or 2nd
-                    const thirds = REAL_GROUPS[k].teams.filter(t =>
-                      t.n !== currentBracket.groups[k][0] && t.n !== currentBracket.groups[k][1]
+                    // Only the ONE 3rd-place team per group (first team not picked 1st or 2nd)
+                    const thirdTeam = REAL_GROUPS[k].teams.find(team =>
+                      team.n !== currentBracket.groups[k][0] && team.n !== currentBracket.groups[k][1]
                     );
-                    return thirds.map(t => {
-                      const picked = currentBracket.thirdPicks.includes(t.n);
-                      const full = currentBracket.thirdPicks.length >= 8 && !picked;
-                      return (
-                        <button key={t.n}
-                          disabled={full}
-                          onClick={() => {
-                            setCurrentBracket(b => {
-                              const prev = b.thirdPicks;
-                              const next = prev.includes(t.n)
-                                ? prev.filter(x => x !== t.n)
-                                : prev.length < 8 ? [...prev, t.n] : prev;
-                              return { ...b, thirdPicks: next };
-                            });
-                          }}
-                          className={`flex items-center gap-3 rounded-xl px-4 py-3 border-2 transition-all font-bold text-sm
-                            ${picked
-                              ? "border-green-400 bg-green-400/20 text-green-200"
-                              : full
-                              ? "border-white/10 bg-white/5 text-white/30 cursor-not-allowed"
-                              : "border-white/20 bg-white/5 text-white hover:bg-white/15"}`}>
-                          <span className="bg-yellow-400/20 text-yellow-400 text-xs font-black w-6 h-6 rounded-full flex items-center justify-center">
-                            {k}
-                          </span>
-                          <span className="text-xl">{t.f}</span>
-                          <span className="flex-1 text-left">{t.n}</span>
-                          {picked && <span className="text-green-400 font-black">✓ Advances</span>}
-                        </button>
-                      );
-                    });
+                    if (!thirdTeam) return null;
+                    const picked = currentBracket.thirdPicks.includes(thirdTeam.n);
+                    const full = currentBracket.thirdPicks.length >= 8 && !picked;
+                    return (
+                      <button key={thirdTeam.n}
+                        disabled={full}
+                        onClick={() => {
+                          setCurrentBracket(b => {
+                            const prev = b.thirdPicks;
+                            const next = prev.includes(thirdTeam.n)
+                              ? prev.filter(x => x !== thirdTeam.n)
+                              : prev.length < 8 ? [...prev, thirdTeam.n] : prev;
+                            return { ...b, thirdPicks: next };
+                          });
+                        }}
+                        className={`flex items-center gap-3 rounded-xl px-4 py-3 border-2 transition-all font-bold text-sm
+                          ${picked
+                            ? "border-green-400 bg-green-400/20 text-green-200"
+                            : full
+                            ? "border-white/10 bg-white/5 text-white/30 cursor-not-allowed"
+                            : "border-white/20 bg-white/5 text-white hover:bg-white/15"}`}>
+                        <span className="bg-yellow-400/20 text-yellow-400 text-xs font-black w-6 h-6 rounded-full flex items-center justify-center">
+                          {k}
+                        </span>
+                        <span className="text-xl">{thirdTeam.f}</span>
+                        <span className="flex-1 text-left">{thirdTeam.n}</span>
+                        {picked && <span className="text-green-400 font-black">{t.advances}</span>}
+                      </button>
+                    );
                   })}
                 </div>
                 <button
                   disabled={currentBracket.thirdPicks.length !== 8}
                   onClick={() => setStep("r32")}
                   className="w-full bg-yellow-400 disabled:bg-white/20 disabled:text-white/30 text-gray-900 font-black text-xl rounded-2xl py-4 transition-all active:scale-95 sticky bottom-4">
-                  {currentBracket.thirdPicks.length === 8 ? "Next: Round of 32 →" : `Pick ${8 - currentBracket.thirdPicks.length} more teams`}
+                  {currentBracket.thirdPicks.length === 8 ? "Next: Round of 32 →" : `${t.pickMore} (${8 - currentBracket.thirdPicks.length})`}
                 </button>
               </div>
             )}
@@ -839,18 +1084,19 @@ export default function App() {
             {step === "r32" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-white text-xl font-black">Round of 32</h2>
-                  <span className="text-white/40 text-xs">Jun 28 – Jul 3</span>
+                  <h2 className="text-white text-xl font-black">{t.roundOf32}</h2>
+                  <span className="text-white/40 text-xs">{t.r32Dates}</span>
                 </div>
-                <p className="text-white/50 text-sm">Pick the winner of each match</p>
+                <p className="text-white/50 text-sm">{t.pickWinner}</p>
                 <div className="grid grid-cols-1 gap-2">
                   {r32Teams.map(([a,b], i) => (
-                    <KnockoutPick key={i} label={`Match ${i+1}`}
+                    <KnockoutPick key={i} label={`${t.match} ${i+1}`}
                       teamA={a} teamB={b}
                       winner={currentBracket.knockout.r32[i]}
                       onPick={t => pickKnockout("r32", i, t)}
                       date={KNOCKOUT_SCHEDULE.r32[i].date}
-                      city={KNOCKOUT_SCHEDULE.r32[i].city}/>
+                      city={KNOCKOUT_SCHEDULE.r32[i].city}
+                      t={t}/>
                   ))}
                 </div>
                 <button
@@ -858,7 +1104,7 @@ export default function App() {
                   onClick={() => setStep("r16")}
                   className="w-full bg-yellow-400 disabled:bg-white/20 disabled:text-white/30 text-gray-900 font-black text-xl rounded-2xl py-4 transition-all active:scale-95 sticky bottom-4">
                   {currentBracket.knockout.r32.filter(Boolean).length < 16
-                    ? `Pick all 16 winners (${currentBracket.knockout.r32.filter(Boolean).length}/16)`
+                    ? `${t.pickAll16} (${currentBracket.knockout.r32.filter(Boolean).length}/16)`
                     : "Next: Round of 16 →"}
                 </button>
               </div>
@@ -868,19 +1114,20 @@ export default function App() {
             {step === "r16" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-white text-xl font-black">Round of 16</h2>
-                  <span className="text-white/40 text-xs">Jul 4 – 7</span>
+                  <h2 className="text-white text-xl font-black">{t.roundOf16}</h2>
+                  <span className="text-white/40 text-xs">{t.r16Dates}</span>
                 </div>
                 <p className="text-white/50 text-sm">Pick the winner of each match</p>
                 <div className="grid grid-cols-1 gap-2">
                   {Array.from({length:8},(_,i) => (
-                    <KnockoutPick key={i} label={`Match ${i+1}`}
+                    <KnockoutPick key={i} label={`${t.match} ${i+1}`}
                       teamA={currentBracket.knockout.r32[i*2]||null}
                       teamB={currentBracket.knockout.r32[i*2+1]||null}
                       winner={currentBracket.knockout.r16[i]}
                       onPick={t => pickKnockout("r16", i, t)}
                       date={KNOCKOUT_SCHEDULE.r16[i].date}
-                      city={KNOCKOUT_SCHEDULE.r16[i].city}/>
+                      city={KNOCKOUT_SCHEDULE.r16[i].city}
+                      t={t}/>
                   ))}
                 </div>
                 <button
@@ -888,7 +1135,7 @@ export default function App() {
                   onClick={() => setStep("qf")}
                   className="w-full bg-yellow-400 disabled:bg-white/20 disabled:text-white/30 text-gray-900 font-black text-xl rounded-2xl py-4 transition-all active:scale-95 sticky bottom-4">
                   {currentBracket.knockout.r16.filter(Boolean).length < 8
-                    ? `Pick all 8 winners (${currentBracket.knockout.r16.filter(Boolean).length}/8)`
+                    ? `${t.pickAll8} (${currentBracket.knockout.r16.filter(Boolean).length}/8)`
                     : "Next: Quarter-Finals →"}
                 </button>
               </div>
@@ -898,19 +1145,20 @@ export default function App() {
             {step === "qf" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-white text-xl font-black">Quarter-Finals</h2>
-                  <span className="text-white/40 text-xs">Jul 9 – 11</span>
+                  <h2 className="text-white text-xl font-black">{t.quarterFinals}</h2>
+                  <span className="text-white/40 text-xs">{t.qfDates}</span>
                 </div>
                 <p className="text-white/50 text-sm">Pick the winner of each match</p>
                 <div className="grid grid-cols-1 gap-2">
                   {Array.from({length:4},(_,i) => (
-                    <KnockoutPick key={i} label={`QF Match ${i+1}`}
+                    <KnockoutPick key={i} label={`${t.qfMatch} ${i+1}`}
                       teamA={currentBracket.knockout.r16[i*2]||null}
                       teamB={currentBracket.knockout.r16[i*2+1]||null}
                       winner={currentBracket.knockout.qf[i]}
                       onPick={t => pickKnockout("qf", i, t)}
                       date={KNOCKOUT_SCHEDULE.qf[i].date}
-                      city={KNOCKOUT_SCHEDULE.qf[i].city}/>
+                      city={KNOCKOUT_SCHEDULE.qf[i].city}
+                      t={t}/>
                   ))}
                 </div>
                 <button
@@ -918,7 +1166,7 @@ export default function App() {
                   onClick={() => setStep("sf")}
                   className="w-full bg-yellow-400 disabled:bg-white/20 disabled:text-white/30 text-gray-900 font-black text-xl rounded-2xl py-4 transition-all active:scale-95 sticky bottom-4">
                   {currentBracket.knockout.qf.filter(Boolean).length < 4
-                    ? `Pick all 4 winners (${currentBracket.knockout.qf.filter(Boolean).length}/4)`
+                    ? `${t.pickAll4} (${currentBracket.knockout.qf.filter(Boolean).length}/4)`
                     : "Next: Semi-Finals →"}
                 </button>
               </div>
@@ -928,19 +1176,20 @@ export default function App() {
             {step === "sf" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-white text-xl font-black">Semi-Finals</h2>
-                  <span className="text-white/40 text-xs">Jul 14 – 15</span>
+                  <h2 className="text-white text-xl font-black">{t.semiFinals}</h2>
+                  <span className="text-white/40 text-xs">{t.sfDates}</span>
                 </div>
                 <p className="text-white/50 text-sm">Pick the 2 finalists</p>
                 <div className="grid grid-cols-1 gap-2">
                   {Array.from({length:2},(_,i) => (
-                    <KnockoutPick key={i} label={`Semi-Final ${i+1}`}
+                    <KnockoutPick key={i} label={`${t.sfMatch} ${i+1}`}
                       teamA={currentBracket.knockout.qf[i*2]||null}
                       teamB={currentBracket.knockout.qf[i*2+1]||null}
                       winner={currentBracket.knockout.sf[i]}
                       onPick={t => pickKnockout("sf", i, t)}
                       date={KNOCKOUT_SCHEDULE.sf[i].date}
-                      city={KNOCKOUT_SCHEDULE.sf[i].city}/>
+                      city={KNOCKOUT_SCHEDULE.sf[i].city}
+                      t={t}/>
                   ))}
                 </div>
                 <button
@@ -948,7 +1197,7 @@ export default function App() {
                   onClick={() => setStep("final")}
                   className="w-full bg-yellow-400 disabled:bg-white/20 disabled:text-white/30 text-gray-900 font-black text-xl rounded-2xl py-4 transition-all active:scale-95 sticky bottom-4">
                   {currentBracket.knockout.sf.filter(Boolean).length < 2
-                    ? `Pick both finalists (${currentBracket.knockout.sf.filter(Boolean).length}/2)`
+                    ? `${t.pickBoth} (${currentBracket.knockout.sf.filter(Boolean).length}/2)`
                     : "Next: The Final →"}
                 </button>
               </div>
@@ -959,8 +1208,8 @@ export default function App() {
               <div className="space-y-4">
                 <div className="text-center">
                   <div className="text-5xl mb-2">🏆</div>
-                  <h2 className="text-white text-2xl font-black">The Final</h2>
-                  <p className="text-white/50 text-sm">Jul 19 · MetLife Stadium, New York/NJ</p>
+                  <h2 className="text-white text-2xl font-black">{t.theFinal}</h2>
+                  <p className="text-white/50 text-sm">{t.finalDate}</p>
                 </div>
                 <KnockoutPick label="World Cup Final"
                   teamA={currentBracket.knockout.sf[0]||null}
@@ -968,12 +1217,13 @@ export default function App() {
                   winner={currentBracket.champion}
                   onPick={t => { pickKnockout("final", 0, t); setCurrentBracket(b=>({...b,champion:t})); }}
                   date={KNOCKOUT_SCHEDULE.final.date}
-                  city={KNOCKOUT_SCHEDULE.final.city}/>
+                  city={KNOCKOUT_SCHEDULE.final.city}
+                      t={t}/>
 
                 {currentBracket.champion && (
                   <div className="bg-yellow-400/20 border-2 border-yellow-400 rounded-2xl p-5 text-center space-y-2">
                     <div className="text-4xl">🏆</div>
-                    <div className="text-yellow-400 font-black text-lg">{currentBracket.name}'s World Champion</div>
+                    <div className="text-yellow-400 font-black text-lg">{currentBracket.name}{t.worldChampion}</div>
                     <div className="text-white font-black text-3xl">
                       {Object.values(REAL_GROUPS).flatMap(g=>g.teams).find(t=>t.n===currentBracket.champion)?.f} {currentBracket.champion}
                     </div>
@@ -995,7 +1245,7 @@ export default function App() {
         {view === "leaderboard" && (
           <div className="space-y-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-white text-2xl font-black">🏆 Leaderboard</h2>
+              <h2 className="text-white text-2xl font-black">{t.leaderboardTitle}</h2>
               <span className="bg-white/10 border border-white/20 text-white/60 text-xs font-bold px-3 py-1 rounded-xl">
                 🔑 {roomCode}
               </span>
@@ -1004,9 +1254,9 @@ export default function App() {
             {room.brackets.length === 0 ? (
               <div className="text-center py-12">
                 <div className="text-5xl mb-4">📭</div>
-                <div className="text-white/60">No brackets yet! Be the first to fill one.</div>
+                <div className="text-white/60">{t.noBrackets}</div>
                 <button onClick={startNewBracket} className="mt-4 bg-yellow-400 text-gray-900 font-black px-6 py-3 rounded-2xl">
-                  Fill My Bracket
+                  {t.fillFirst}
                 </button>
               </div>
             ) : (
@@ -1029,13 +1279,13 @@ export default function App() {
                         <div className="text-white font-black text-lg">{b.name||"Unnamed"}</div>
                         {b.champion && (
                           <div className="text-white/50 text-sm">
-                            Picked: {Object.values(REAL_GROUPS).flatMap(g=>g.teams).find(t=>t.n===b.champion)?.f} {b.champion}
+                            {t.picked} {Object.values(REAL_GROUPS).flatMap(g=>g.teams).find(x=>x.n===b.champion)?.f} {b.champion}
                           </div>
                         )}
                       </div>
                       <div className="text-right">
                         <div className="text-yellow-400 font-black text-2xl">{b.score}</div>
-                        <div className="text-white/40 text-xs">pts</div>
+                        <div className="text-white/40 text-xs">{t.pts}</div>
                       </div>
                       <button onClick={() => editBracket(b.idx)}
                         className="bg-white/10 hover:bg-white/20 text-white rounded-xl px-3 py-2 text-sm font-bold">
@@ -1047,7 +1297,7 @@ export default function App() {
             )}
             <button onClick={startNewBracket}
               className="w-full bg-yellow-400 text-gray-900 font-black rounded-2xl py-4 text-lg">
-              ✏️ Add Another Bracket
+              {t.addBracket}
             </button>
           </div>
         )}
@@ -1055,7 +1305,7 @@ export default function App() {
         {/* ── ADMIN ── */}
         {view === "admin" && (
           <div className="space-y-5">
-            <h2 className="text-white text-2xl font-black">⚙️ Admin · {roomCode}</h2>
+            <h2 className="text-white text-2xl font-black">⚙️ {t.adminTitle} · {roomCode}</h2>
             {!adminUnlocked ? (
               <div className="space-y-4">
                 <p className="text-white/60">Enter the admin code for room <span className="text-yellow-400 font-bold">{roomCode}</span>.</p>
@@ -1064,13 +1314,13 @@ export default function App() {
                   className="w-full bg-white/10 border-2 border-white/20 rounded-2xl px-5 py-4 text-white text-xl font-bold uppercase tracking-widest placeholder-white/30 focus:outline-none focus:border-yellow-400 transition-all text-center"/>
                 <button onClick={() => {
                     if (adminInput === room.adminCode) { setAdminUnlocked(true); }
-                    else showToast("Wrong code!", "red");
+                    else showToast(t.wrongCode, "red");
                   }}
                   className="w-full bg-yellow-400 text-gray-900 font-black rounded-2xl py-4 text-lg">
-                  Unlock
+                  {t.unlock}
                 </button>
                 <div className="bg-white/5 rounded-2xl p-4 text-white/40 text-sm text-center">
-                  Admin code for this room:<br/>
+                  {t.adminCodeLabel}<br/>
                   <span className="text-yellow-400 font-bold text-lg tracking-widest">{room.adminCode}</span><br/>
                   <span className="text-white/30 text-xs">Save this — it's only shown here.</span>
                 </div>
@@ -1079,33 +1329,33 @@ export default function App() {
               <div className="space-y-4">
                 <div className="bg-green-500/20 border border-green-400/40 rounded-2xl p-4 text-green-300 font-bold">✅ Admin unlocked</div>
                 <div className="bg-white/10 rounded-2xl p-4 border border-white/20 space-y-3">
-                  <h3 className="text-white font-black">🗑️ Manage Brackets</h3>
-                  {room.brackets.length === 0 && <p className="text-white/40 text-sm">No brackets yet.</p>}
+                  <h3 className="text-white font-black">{t.manageBrackets}</h3>
+                  {room.brackets.length === 0 && <p className="text-white/40 text-sm">{t.noBracketsYet}</p>}
                   {room.brackets.map((b, i) => (
                     <div key={i} className="flex items-center justify-between bg-white/5 rounded-xl px-4 py-3">
                       <span className="text-white font-bold">{b.name||"Unnamed"}</span>
                       <button onClick={() => {
                           const updated = room.brackets.filter((_,j)=>j!==i);
                           setRoom(r=>({...r,brackets:updated}));
-                          showToast("Bracket removed");
+                          showToast(t.bracketRemoved);
                         }}
                         className="bg-red-500/30 hover:bg-red-500/50 text-red-300 rounded-lg px-3 py-1 text-sm font-bold">
-                        Remove
+                        {t.remove}
                       </button>
                     </div>
                   ))}
                 </div>
                 <div className="bg-white/10 rounded-2xl p-4 border border-white/20 space-y-3">
-                  <h3 className="text-white font-black">🔄 Reset Room</h3>
-                  <p className="text-white/50 text-sm">Deletes ALL brackets in <span className="text-yellow-400">{roomCode}</span>. Cannot be undone!</p>
+                  <h3 className="text-white font-black">{t.resetRoom}</h3>
+                  <p className="text-white/50 text-sm">{t.resetDesc} <span className="text-yellow-400">{roomCode}</span>.</p>
                   <button onClick={() => {
-                      if (window.confirm(`Delete all brackets in room ${roomCode}?`)) {
+                      if (window.confirm(`${t.resetConfirm} ${roomCode}?`)) {
                         setRoom(r=>({...r,brackets:[]}));
-                        showToast("Room reset!");
+                        showToast(t.roomReset);
                       }
                     }}
                     className="w-full bg-red-500/30 hover:bg-red-500/50 text-red-300 font-black rounded-xl py-3">
-                    🗑️ Reset All Brackets
+                    {t.resetBtn}
                   </button>
                 </div>
               </div>
