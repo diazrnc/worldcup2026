@@ -382,7 +382,7 @@ const REAL_GROUPS = {
     ]},
 
   L: { name:"L", teams:[
-      {f:"/flags/england.svg",n:"England"},{f:"🇭🇷",n:"Croatia"},{f:"🇬🇭",n:"Ghana"},{f:"🇵🇦",n:"Panama"}],
+      {f:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",n:"England"},{f:"🇭🇷",n:"Croatia"},{f:"🇬🇭",n:"Ghana"},{f:"🇵🇦",n:"Panama"}],
     matches:[
       {date:"Jun 17 | 16:00",teams:"England vs Croatia",city:"Dallas 🇺🇸"},
       {date:"Jun 17 | 19:00",teams:"Ghana vs Panama",city:"Toronto 🇨🇦"},
@@ -463,7 +463,7 @@ function emptyBracket() {
     champion: null,
     groups,
     thirdGroupPicks, // which team finishes 3rd in each group (user picks from 2 remaining)
-    thirdPicks: [], // ranked list top 8 advance to R32 (ordered best to worst)
+    thirdPicks: [],  // ranked list top 8 advance to R32 (ordered best to worst)
     knockout: {
       r32: Array(16).fill(null),
       r16: Array(8).fill(null),
@@ -795,13 +795,13 @@ export default function App() {
      * SMART R32 BRACKET GENERATOR
      * 24 teams advance: 12 Winners (W), 12 Runners-up (R), 8 best 3rds (T)
      * Rules:
-     * 1. 3rd-place teams NEVER play each other
-     * 2. Prefer W vs T for all 8 slots involving 3rd-place teams
-     * 3. Avoid same-group rematches
-     * 4. Use rank order T[0]=best, T[7]=worst
-     * 5. Fill remaining slots with W vs R cross-group
-     * 6. Fallback to R vs R only if no W available
-     * 7. Deterministic: same input = same bracket
+     *   1. 3rd-place teams NEVER play each other
+     *   2. Prefer W vs T for all 8 slots involving 3rd-place teams
+     *   3. Avoid same-group rematches
+     *   4. Use rank order T[0]=best, T[7]=worst
+     *   5. Fill remaining slots with W vs R cross-group
+     *   6. Fallback to R vs R only if no W available
+     *   7. Deterministic: same input = same bracket
      */
     const gKeys = Object.keys(REAL_GROUPS);
     const W = gKeys.map(k => currentBracket.groups[k][0] || null);
