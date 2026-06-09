@@ -48,12 +48,20 @@ const T = {
     pick1st: "Pick 1st", pick2nd: "Pick 2nd",
     hideMatches: "Hide", showMatches: "📅 Matches",
     // Thirds step
-    stepThirds: "Best 3rd Place Teams",
-    stepThirdsSub: "In the 2026 World Cup, 8 of the 12 group 3rd-place teams also advance to the Round of 32. Pick which 8 you think will make it!",
+    stepThirds: "3rd Place Teams",
+    stepThirdsSub: "Pick which team finishes 3rd in each group (from the 2 remaining teams).",
+    stepThirdsRank: "Rank the 3rd Place Teams",
+    stepThirdsRankSub: "Drag or tap ▲▼ to rank all 12 from best to worst. The top 8 advance to the Round of 32.",
     selected: "Selected",
     advances: "✓ Advances",
+    groupsDoneThirds: "done",
+    nextRank: "Next: Rank Them →",
     nextR32: "Next: Round of 32 →",
     pickMore: "Pick more teams",
+    rankLabel: "Rank",
+    advancesTop8: "Advances (Top 8)",
+    eliminated: "Eliminated",
+    tapToPickThird: "Tap to pick 3rd place",
     // Knockout rounds
     pickWinner: "Pick the winner of each match",
     roundOf32: "Round of 32",
@@ -158,12 +166,20 @@ const T = {
     pick1st: "Elige 1.°", pick2nd: "Elige 2.°",
     hideMatches: "Ocultar", showMatches: "📅 Partidos",
     // Thirds step
-    stepThirds: "Mejores Terceros Lugares",
-    stepThirdsSub: "En el Mundial 2026, 8 de los 12 equipos en 3er lugar también avanzan a la Ronda de 32. ¡Elige cuáles 8 crees que pasarán!",
+    stepThirds: "Equipos en 3er Lugar",
+    stepThirdsSub: "Elige qué equipo queda en 3er lugar en cada grupo (entre los 2 equipos restantes).",
+    stepThirdsRank: "Clasifica los 3ros Lugares",
+    stepThirdsRankSub: "Arrastra o usa ▲▼ para ordenar los 12 de mejor a peor. Los 8 mejores avanzan a la Ronda de 32.",
     selected: "Seleccionados",
     advances: "✓ Avanza",
+    groupsDoneThirds: "listos",
+    nextRank: "Siguiente: Clasificarlos →",
     nextR32: "Siguiente: Ronda de 32 →",
     pickMore: "Elige más equipos",
+    rankLabel: "Pos.",
+    advancesTop8: "Avanza (Top 8)",
+    eliminated: "Eliminado",
+    tapToPickThird: "Toca para elegir 3er lugar",
     // Knockout rounds
     pickWinner: "Elige al ganador de cada partido",
     roundOf32: "Ronda de 32",
@@ -440,11 +456,14 @@ const KNOCKOUT_SCHEDULE = {
 function emptyBracket() {
   const groups = {};
   Object.keys(REAL_GROUPS).forEach(k => { groups[k] = [null, null]; });
+  const thirdGroupPicks = {};
+  Object.keys(REAL_GROUPS).forEach(k => { thirdGroupPicks[k] = null; });
   return {
     name: "",
     champion: null,
     groups,
-    thirdPicks: [], // 8 best 3rd-place teams chosen by user
+    thirdGroupPicks, // which team finishes 3rd in each group (user picks from 2 remaining)
+    thirdPicks: [], // ranked list top 8 advance to R32 (ordered best to worst)
     knockout: {
       r32: Array(16).fill(null),
       r16: Array(8).fill(null),
@@ -949,11 +968,11 @@ export default function App() {
             {/* Progress bar */}
             <div className="space-y-2">
               <div className="flex items-center gap-1">
-                {["name","groups","thirds","r32","r16","qf","sf","final"].map((s,i) => (
+                {["name","groups","thirds","thirdsRank","r32","r16","qf","sf","final"].map((s,i) => (
                   <div key={s} className={`flex-1 h-2 rounded-full transition-all cursor-pointer
-                    ${["name","groups","thirds","r32","r16","qf","sf","final"].indexOf(step) >= i ? "bg-yellow-400" : "bg-white/20"}`}
+                    ${["name","groups","thirds","thirdsRank","r32","r16","qf","sf","final"].indexOf(step) >= i ? "bg-yellow-400" : "bg-white/20"}`}
                     onClick={() => {
-                      const order = ["name","groups","thirds","r32","r16","qf","sf","final"];
+                      const order = ["name","groups","thirds","thirdsRank","r32","r16","qf","sf","final"];
                       const curr = order.indexOf(step);
                       if (i < curr) setStep(s);
                     }}
@@ -962,7 +981,7 @@ export default function App() {
               </div>
               <div className="flex items-center justify-between">
                 <button onClick={() => {
-                  const order = ["name","groups","thirds","r32","r16","qf","sf","final"];
+                  const order = ["name","groups","thirds","thirdsRank","r32","r16","qf","sf","final"];
                   const curr = order.indexOf(step);
                   if (curr > 0) setStep(order[curr - 1]);
                 }}
@@ -972,7 +991,7 @@ export default function App() {
                   ← Back
                 </button>
                 <span className="text-white/40 text-xs capitalize">
-                  {step === "r32" ? "Round of 32" : step === "r16" ? "Round of 16" : step === "qf" ? "Quarter-Finals" : step === "sf" ? "Semi-Finals" : step === "final" ? "The Final" : step}
+                  {step === "r32" ? t.roundOf32 : step === "r16" ? t.roundOf16 : step === "qf" ? t.quarterFinals : step === "sf" ? t.semiFinals : step === "final" ? t.theFinal : step === "thirds" ? t.stepThirds : step === "thirdsRank" ? t.stepThirdsRank : step}
                 </span>
                 <div className="w-12"/>
               </div>
@@ -1019,63 +1038,136 @@ export default function App() {
               </div>
             )}
 
+            {/* ── STEP: PICK 3RD PLACE TEAM PER GROUP ── */}
             {step === "thirds" && (
               <div className="space-y-4">
                 <div className="text-center">
                   <div className="text-4xl mb-2">🥉</div>
                   <h2 className="text-white text-xl font-black">{t.stepThirds}</h2>
-                  <p className="text-white/60 text-sm mt-1">
-                    {t.stepThirdsSub}
-                  </p>
+                  <p className="text-white/60 text-sm mt-1">{t.stepThirdsSub}</p>
                 </div>
                 <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 flex items-center justify-between">
                   <span className="text-white/60 text-sm">{t.selected}</span>
-                  <span className={`font-black text-lg ${currentBracket.thirdPicks.length === 8 ? "text-green-400" : "text-yellow-400"}`}>
-                    {currentBracket.thirdPicks.length} / 8
+                  <span className={`font-black text-lg ${Object.values(currentBracket.thirdGroupPicks||{}).filter(Boolean).length === 12 ? "text-green-400" : "text-yellow-400"}`}>
+                    {Object.values(currentBracket.thirdGroupPicks||{}).filter(Boolean).length} / 12
                   </span>
                 </div>
-                <div className="grid grid-cols-1 gap-2">
+                <div className="grid grid-cols-1 gap-3">
                   {Object.keys(REAL_GROUPS).map(k => {
-                    // Only the ONE 3rd-place team per group (first team not picked 1st or 2nd)
-                    const thirdTeam = REAL_GROUPS[k].teams.find(team =>
+                    const remaining = REAL_GROUPS[k].teams.filter(team =>
                       team.n !== currentBracket.groups[k][0] && team.n !== currentBracket.groups[k][1]
                     );
-                    if (!thirdTeam) return null;
-                    const picked = currentBracket.thirdPicks.includes(thirdTeam.n);
-                    const full = currentBracket.thirdPicks.length >= 8 && !picked;
+                    const groupThirdPick = (currentBracket.thirdGroupPicks||{})[k];
                     return (
-                      <button key={thirdTeam.n}
-                        disabled={full}
-                        onClick={() => {
-                          setCurrentBracket(b => {
-                            const prev = b.thirdPicks;
-                            const next = prev.includes(thirdTeam.n)
-                              ? prev.filter(x => x !== thirdTeam.n)
-                              : prev.length < 8 ? [...prev, thirdTeam.n] : prev;
-                            return { ...b, thirdPicks: next };
-                          });
-                        }}
-                        className={`flex items-center gap-3 rounded-xl px-4 py-3 border-2 transition-all font-bold text-sm
-                          ${picked
-                            ? "border-green-400 bg-green-400/20 text-green-200"
-                            : full
-                            ? "border-white/10 bg-white/5 text-white/30 cursor-not-allowed"
-                            : "border-white/20 bg-white/5 text-white hover:bg-white/15"}`}>
-                        <span className="bg-yellow-400/20 text-yellow-400 text-xs font-black w-6 h-6 rounded-full flex items-center justify-center">
-                          {k}
-                        </span>
-                        <span className="text-xl">{thirdTeam.f}</span>
-                        <span className="flex-1 text-left">{thirdTeam.n}</span>
-                        {picked && <span className="text-green-400 font-black">{t.advances}</span>}
-                      </button>
+                      <div key={k} className="bg-white/10 rounded-xl p-3 border border-white/20">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="bg-yellow-400 text-gray-900 font-black text-sm w-7 h-7 rounded-full flex items-center justify-center">{k}</span>
+                          <span className="text-white/50 text-xs">{t.tapToPickThird}</span>
+                          {groupThirdPick && <span className="ml-auto text-green-400 text-xs font-bold">✓</span>}
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          {remaining.map(team => {
+                            const isPicked = groupThirdPick === team.n;
+                            return (
+                              <button key={team.n}
+                                onClick={() => setCurrentBracket(b => ({
+                                  ...b,
+                                  thirdGroupPicks: {
+                                    ...(b.thirdGroupPicks||{}),
+                                    [k]: isPicked ? null : team.n
+                                  }
+                                }))}
+                                className={`flex items-center gap-2 rounded-lg px-3 py-2 border-2 transition-all text-sm font-bold
+                                  ${isPicked
+                                    ? "border-yellow-400 bg-yellow-400 text-gray-900"
+                                    : "border-white/20 bg-white/5 text-white hover:bg-white/15"}`}>
+                                <span className="text-lg">{team.f}</span>
+                                <span className="truncate">{team.n}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
                     );
                   })}
                 </div>
                 <button
-                  disabled={currentBracket.thirdPicks.length !== 8}
-                  onClick={() => setStep("r32")}
+                  disabled={Object.values(currentBracket.thirdGroupPicks||{}).filter(Boolean).length < 12}
+                  onClick={() => {
+                    // Pre-populate thirdPicks ranking from thirdGroupPicks in group order
+                    const allThirds = Object.keys(REAL_GROUPS).map(k => (currentBracket.thirdGroupPicks||{})[k]).filter(Boolean);
+                    setCurrentBracket(b => ({ ...b, thirdPicks: allThirds }));
+                    setStep("thirdsRank");
+                  }}
                   className="w-full bg-yellow-400 disabled:bg-white/20 disabled:text-white/30 text-gray-900 font-black text-xl rounded-2xl py-4 transition-all active:scale-95 sticky bottom-4">
-                  {currentBracket.thirdPicks.length === 8 ? "Next: Round of 32 →" : `${t.pickMore} (${8 - currentBracket.thirdPicks.length})`}
+                  {Object.values(currentBracket.thirdGroupPicks||{}).filter(Boolean).length < 12
+                    ? `${t.nextRank} (${Object.values(currentBracket.thirdGroupPicks||{}).filter(Boolean).length}/12)`
+                    : t.nextRank}
+                </button>
+              </div>
+            )}
+
+            {/* ── STEP: RANK THE 12 THIRD-PLACE TEAMS ── */}
+            {step === "thirdsRank" && (
+              <div className="space-y-4">
+                <div className="text-center">
+                  <div className="text-4xl mb-2">📊</div>
+                  <h2 className="text-white text-xl font-black">{t.stepThirdsRank}</h2>
+                  <p className="text-white/60 text-sm mt-1">{t.stepThirdsRankSub}</p>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white/50 text-xs text-center">
+                  🟢 Positions 1–8 advance · 🔴 Positions 9–12 eliminated
+                </div>
+                <div className="space-y-2">
+                  {(currentBracket.thirdPicks||[]).map((teamName, idx) => {
+                    const teamObj = Object.values(REAL_GROUPS).flatMap(g => g.teams).find(x => x.n === teamName);
+                    const advances = idx < 8;
+                    return (
+                      <div key={teamName}
+                        className={`flex items-center gap-3 rounded-xl px-3 py-3 border-2 transition-all
+                          ${advances ? "border-green-400/40 bg-green-400/10" : "border-red-400/30 bg-red-400/5"}`}>
+                        <span className={`font-black text-lg w-8 text-center ${advances ? "text-green-400" : "text-red-400/60"}`}>
+                          {idx + 1}
+                        </span>
+                        <span className="text-xl">{teamObj?.f}</span>
+                        <span className={`flex-1 font-bold text-sm ${advances ? "text-white" : "text-white/40"}`}>{teamName}</span>
+                        <span className={`text-xs font-bold ${advances ? "text-green-400" : "text-red-400/60"}`}>
+                          {advances ? t.advancesTop8 : t.eliminated}
+                        </span>
+                        <div className="flex flex-col gap-1">
+                          <button
+                            disabled={idx === 0}
+                            onClick={() => {
+                              setCurrentBracket(b => {
+                                const arr = [...b.thirdPicks];
+                                [arr[idx-1], arr[idx]] = [arr[idx], arr[idx-1]];
+                                return { ...b, thirdPicks: arr };
+                              });
+                            }}
+                            className="disabled:opacity-20 bg-white/10 hover:bg-white/20 text-white rounded px-2 py-0.5 text-xs font-black transition-all">
+                            ▲
+                          </button>
+                          <button
+                            disabled={idx === (currentBracket.thirdPicks||[]).length - 1}
+                            onClick={() => {
+                              setCurrentBracket(b => {
+                                const arr = [...b.thirdPicks];
+                                [arr[idx+1], arr[idx]] = [arr[idx], arr[idx+1]];
+                                return { ...b, thirdPicks: arr };
+                              });
+                            }}
+                            className="disabled:opacity-20 bg-white/10 hover:bg-white/20 text-white rounded px-2 py-0.5 text-xs font-black transition-all">
+                            ▼
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <button
+                  onClick={() => setStep("r32")}
+                  className="w-full bg-yellow-400 text-gray-900 font-black text-xl rounded-2xl py-4 transition-all active:scale-95 sticky bottom-4">
+                  {t.nextR32}
                 </button>
               </div>
             )}
