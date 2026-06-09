@@ -791,30 +791,101 @@ export default function App() {
   );
 
   const r32Teams = (() => {
-    // 12 groups: A(0) B(1) C(2) D(3) E(4) F(5) G(6) H(7) I(8) J(9) K(10) L(11)
-    const g = Object.keys(REAL_GROUPS);
-    const W = g.map(k => currentBracket.groups[k][0] || null); // 12 winners
-    const R = g.map(k => currentBracket.groups[k][1] || null); // 12 runners-up
-    const T = currentBracket.thirdPicks || []; // up to 8 chosen 3rd-place
-    // 16 matches: 12 W vs R cross-group pairs + 4 R vs best 3rd-place
-    return [
-      [W[0], R[1]], // A1 vs B2 - Match 1
-      [W[1], R[0]], // B1 vs A2 - Match 2
-      [W[2], R[3]], // C1 vs D2 - Match 3
-      [W[3], R[2]], // D1 vs C2 - Match 4
-      [W[4], R[5]], // E1 vs F2 - Match 5
-      [W[5], R[4]], // F1 vs E2 - Match 6
-      [W[6], R[7]], // G1 vs H2 - Match 7
-      [W[7], R[6]], // H1 vs G2 - Match 8
-      [W[8], R[9]], // I1 vs J2 - Match 9
-      [W[9], R[8]], // J1 vs I2 - Match 10
-      [W[10], R[11]], // K1 vs L2 - Match 11
-      [W[11], R[10]], // L1 vs K2 - Match 12
-      [T[0]||null, T[1]||null], // Best 3rd#1 vs Best 3rd#2 - Match 13
-      [T[2]||null, T[3]||null], // Best 3rd#3 vs Best 3rd#4 - Match 14
-      [T[4]||null, T[5]||null], // Best 3rd#5 vs Best 3rd#6 - Match 15
-      [T[6]||null, T[7]||null], // Best 3rd#7 vs Best 3rd#8 - Match 16
-    ];
+    /**
+     * SMART R32 BRACKET GENERATOR
+     * 24 teams advance: 12 Winners (W), 12 Runners-up (R), 8 best 3rds (T)
+     * Rules:
+     * 1. 3rd-place teams NEVER play each other
+     * 2. Prefer W vs T for all 8 slots involving 3rd-place teams
+     * 3. Avoid same-group rematches
+     * 4. Use rank order T[0]=best, T[7]=worst
+     * 5. Fill remaining slots with W vs R cross-group
+     * 6. Fallback to R vs R only if no W available
+     * 7. Deterministic: same input = same bracket
+     */
+    const gKeys = Object.keys(REAL_GROUPS);
+    const W = gKeys.map(k => currentBracket.groups[k][0] || null);
+    const R = gKeys.map(k => currentBracket.groups[k][1] || null);
+    const T = (currentBracket.thirdPicks || []).slice(0, 8);
+
+    // Map team name -> group index for rematch detection
+    const groupOf = {};
+    gKeys.forEach((k, i) => {
+      if (W[i]) groupOf[W[i]] = i;
+      if (R[i]) groupOf[R[i]] = i;
+    });
+    T.forEach(name => {
+      const gi = gKeys.findIndex(k => REAL_GROUPS[k].teams.some(t => t.n === name));
+      if (gi >= 0) groupOf[name] = gi;
+    });
+
+    const sameGroup = (a, b) =>
+      a && b &&
+      groupOf[a] !== undefined &&
+      groupOf[b] !== undefined &&
+      groupOf[a] === groupOf[b];
+
+    const usedW = new Set();
+    const usedR = new Set();
+    const wtMatches = [];
+    const wrMatches = [];
+    const rrMatches = [];
+
+    // PHASE 1: Pair each T[i] (best first) with an available winner, no same-group
+    for (let ti = 0; ti < T.length; ti++) {
+      const third = T[ti];
+      if (!third) continue;
+      let paired = false;
+      // First pass: cross-group winner
+      for (let wi = 0; wi < W.length; wi++) {
+        if (!W[wi] || usedW.has(wi) || sameGroup(W[wi], third)) continue;
+        wtMatches.push([W[wi], third]);
+        usedW.add(wi);
+        paired = true;
+        break;
+      }
+      // Fallback: same-group allowed if no other option
+      if (!paired) {
+        for (let wi = 0; wi < W.length; wi++) {
+          if (!W[wi] || usedW.has(wi)) continue;
+          wtMatches.push([W[wi], third]);
+          usedW.add(wi);
+          break;
+        }
+      }
+    }
+
+    // PHASE 2: Remaining winners paired with cross-group runners-up
+    const remainingWIdx = W.map((_, i) => i).filter(i => !usedW.has(i) && W[i]);
+    for (const wi of remainingWIdx) {
+      let paired = false;
+      for (let ri = 0; ri < R.length; ri++) {
+        if (!R[ri] || usedR.has(ri) || sameGroup(W[wi], R[ri])) continue;
+        wrMatches.push([W[wi], R[ri]]);
+        usedR.add(ri);
+        paired = true;
+        break;
+      }
+      if (!paired) {
+        for (let ri = 0; ri < R.length; ri++) {
+          if (!R[ri] || usedR.has(ri)) continue;
+          wrMatches.push([W[wi], R[ri]]);
+          usedR.add(ri);
+          break;
+        }
+      }
+    }
+
+    // PHASE 3: Leftover runners-up vs runners-up (last resort)
+    const leftoverR = R.map((_, i) => i).filter(i => !usedR.has(i) && R[i]);
+    for (let i = 0; i + 1 < leftoverR.length; i += 2) {
+      rrMatches.push([R[leftoverR[i]], R[leftoverR[i + 1]]]);
+    }
+
+    // W vs T first (most attractive), then W vs R, then R vs R
+    const allMatches = [...wtMatches, ...wrMatches, ...rrMatches];
+    while (allMatches.length < 16) allMatches.push([null, null]);
+    return allMatches.slice(0, 16);
   })();
 
   function pickKnockout(round, idx, team) {
